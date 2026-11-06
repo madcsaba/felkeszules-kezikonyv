@@ -180,6 +180,13 @@ main { padding: 0 32px 80px; min-width: 0; }
 .hero .subtitle { font-size: 19px; color: var(--muted); margin: 0 0 16px; text-wrap: pretty; }
 .meta { font-size: 14px; color: var(--muted); }
 
+.hero-art {
+  display: block; width: 100%; height: auto;
+  margin: 20px 0 4px;
+  border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
 .stat-grid {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
   margin: 28px 0 24px;
