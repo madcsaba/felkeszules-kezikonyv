@@ -343,6 +343,13 @@ details.fold > summary .tag {
   background: var(--surface-2); padding: 2px 8px; border-radius: 999px;
 }
 details.fold > .fold-body { padding: 0 20px 14px; }
+
+/* Petíció szövege (beágyazott rich text) */
+#petition-what-text { font-size: 16px; line-height: 1.6; }
+#petition-what-text .trix-content > div { margin-bottom: .8em; }
+#petition-what-text ol, #petition-what-text ul { margin-bottom: .8em; }
+#petition-what-text li { margin: 4px 0; }
+#petition-what-text > div > div:last-child { margin-bottom: 0; }
 .flag { font-size: 20px; }
 
 /* Checklists */
