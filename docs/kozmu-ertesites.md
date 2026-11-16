@@ -1,6 +1,6 @@
 # Közmű-kimaradási értesítés – javasolt szabvány
 
-Tervezet, 2026. november. Célja, hogy az áram-, víz-, gáz- és távhőszolgáltatók **egyféle, géppel olvasható, aláírt** formában közöljék a kimaradásokat, és a lakos telefonja a **saját helyeire** szűrve, **a saját nyelvén** mutassa meg, miért nincs áram vagy víz.
+Tervezet, 2026. november. Mintafájlok: [`minta/`](minta/). Petíció és szakpolitikai javaslat: [`peticio-szolgaltatok.md`](peticio-szolgaltatok.md), [`szakpolitikai-javaslat.md`](szakpolitikai-javaslat.md). Célja, hogy az áram-, víz-, gáz- és távhőszolgáltatók **egyféle, géppel olvasható, aláírt** formában közöljék a kimaradásokat, és a lakos telefonja a **saját helyeire** szűrve, **a saját nyelvén** mutassa meg, miért nincs áram vagy víz.
 
 ## 1. Alapelvek
 

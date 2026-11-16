@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>E.ON – Elmű Hálózati: áramkimaradások, Budapest (DEMÓ)</title>
+    <link>https://github.com/madcsaba/felkeszules-kezikonyv/tree/pwa-app/docs/minta</link>
+    <description>Tervezett munkák és üzemzavarok a KÖZMŰ-KIMARADÁS K1 szabvány szerint. Minden adat kitalált.</description>
+    <language>hu</language>
+    <lastBuildDate>Mon, 16 Nov 2026 10:40:00 +0100</lastBuildDate>
+    <atom:link href="budapest.rss" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Üzemzavar – áram – Budapest: Minta utca, Példa tér (folyamatban)</title>
+      <description>Ok: időjárás. Kezdete: 2026.11.16. 10:12. Várható helyreállítás: 2026.11.16. 13:30. Érintett felhasználók: 1240. (DEMÓ)</description>
+      <link>budapest.json#eon_bp-2026-11-16-0042</link>
+      <guid isPermaLink="false">eon_bp-2026-11-16-0042</guid>
+      <category>K1:E:Z:F:c4</category>
+      <pubDate>Mon, 16 Nov 2026 10:40:00 +0100</pubDate>
+    </item>
+    <item>
+      <title>Tervezett munka – áram – Budapest: Kitalált utca 2–18 (bejelentve)</title>
+      <description>Ok: karbantartás. 2026.11.19. 08:00–15:00. Érintett felhasználók: 86. (DEMÓ)</description>
+      <link>budapest.json#eon_bp-2026-11-19-0007</link>
+      <guid isPermaLink="false">eon_bp-2026-11-19-0007</guid>
+      <category>K1:E:T:B:c2</category>
+      <pubDate>Wed, 04 Nov 2026 08:00:00 +0100</pubDate>
+    </item>
+  </channel>
+</rss>

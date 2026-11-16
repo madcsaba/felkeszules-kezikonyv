@@ -1,0 +1,27 @@
+{
+  "v": "K1",
+  "demo": true,
+  "issuer": "fv",
+  "settlement": "budapest",
+  "generated": "2026-11-16T10:45:00+01:00",
+  "events": [
+    {
+      "id": "fv-2026-11-16-0113",
+      "sent": "2026-11-16T09:05:00+01:00",
+      "status": "Actual",
+      "msgType": "Alert",
+      "service": "V",
+      "kind": "Z",
+      "state": "F",
+      "cause": "c3",
+      "onset": "2026-11-16T08:40:00+01:00",
+      "expectedRestore": "2026-11-16T18:00:00+01:00",
+      "area": { "settlements": ["budapest"], "streets": ["Próba utca", "Minta köz"], "polygon": null },
+      "households": 420,
+      "replacement": { "kind": "szükségkút", "where": "Próba utca és Minta köz sarka (DEMÓ)" },
+      "infoUrl": "https://www.vizmuvek.hu/hu/kezdolap/informaciok/munkaterkep-hol-dolgozunk",
+      "note": { "hu": "Csőtörés miatti javítás. A magasabb emeleteken nyomáscsökkenés lehet. (DEMÓ)" },
+      "sig": "ed25519:DEMO-SIGNATURE"
+    }
+  ]
+}

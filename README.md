@@ -8,6 +8,9 @@ Statikus, függőség nélküli weboldal (HTML + CSS + JS) a „Felkészülés v
 - `style.css` – megjelenés: világos/sötét téma, mobilnézet, nyomtatási (PDF) nézet
 - `script.js` – tartalomjegyzék-kiemelés, mobilmenü, kipipálható listák (csak a böngészőben tárolva), 10 pontos teszt pontozása
 - `app/` – mobilalkalmazás (PWA): 5 képernyő, 4 nyelv (hu, en, uk, de), telepíthető a kezdőképernyőre
+- `docs/peticio-szolgaltatok.md` – közérthető petíció a közműszolgáltatókhoz
+- `docs/szakpolitikai-javaslat.md` – szakpolitikai javaslat a minisztériumoknak, szabványjavaslattal és nemzetközi példákkal
+- `docs/minta/` – mintafájlok (JSON, RSS, SMS-forma) a szabványhoz, kitalált adatokkal
 - `docs/kozmu-ertesites.md` – javasolt szabvány a közmű-kimaradási értesítésekhez (CAP-alapú, helyalapú, aláírt, SMS-be is belefér)
 - `sw.js` – service worker: az app és a kézikönyv internet nélkül is megnyílik
 - `.nojekyll` – a GitHub Pages ne futtassa a Jekyllt
