@@ -1,10 +1,12 @@
 /* Offline működés: az app és a teljes kézikönyv a telefonon marad.
    Új verzió kiadásakor a CACHE nevét kell átírni. */
-var CACHE = "felkeszules-v1";
+var CACHE = "felkeszules-v2";
 var FILES = [
   "./", "./index.html", "./style.css", "./script.js", "./img/hero.svg",
   "./app/", "./app/index.html", "./app/manifest.webmanifest",
-  "./app/icon.svg", "./app/icon-192.png", "./app/icon-512.png"
+  "./app/icon.svg", "./app/icon-192.png", "./app/icon-512.png",
+  "./assets/fonts.css", "./assets/fonts/inter-latin-wght-normal.woff2",
+  "./assets/fonts/inter-latin-ext-wght-normal.woff2"
 ];
 
 self.addEventListener("install", function (e) {
