@@ -1,7 +1,8 @@
-# Közhang témaajánló – első kiadás
+# Felkészülés vészhelyzetekre – első kiadás
 
-A kozhang.hu nyilvános egyeztéseinek statisztika-alapú témaajánlója (nem hivatalos):
-napi adatfrissítés, valós határidők és lezárási dátumok, MEMI-fejezetek, kereső és
-kategóriaszűrő, naptár a lezárásokkal és eredményekkel, Atom-hírcsatorna.
+A családi és közösségi vészhelyzeti kézikönyv: 72 órás önellátás, fejezetenként külön
+oldal, nyomtatható ellenőrzőlisták, kipipálható teendők, és a magyarországi hivatalos
+források (BM OKF, NKI, NMHH) – ahol nincs nyilvános adat, ott a hatóság megkeresése
+a 15. fejezet listája szerint.
 
-**Élő:** https://madcsaba.github.io/kozhang_ajanlo/
+**Élő:** https://madcsaba.github.io/felkeszules-kezikonyv/
