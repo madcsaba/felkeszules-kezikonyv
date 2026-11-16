@@ -45,7 +45,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18p
 .app{width:100%;max-width:520px;height:100%;display:flex;flex-direction:column;background:var(--bg)}
 header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
 .mark{background:var(--accent);color:var(--on-accent);font-weight:700;border-radius:10px;padding:6px 9px;font-size:16px;letter-spacing:.02em}
-header h1{font-size:20px;margin:0;flex:1;min-width:0;overflow-wrap:anywhere}
+header h1{font-size:19px;margin:0;white-space:nowrap}
+#demo-tag{flex:none}
+header .spacer,header select{min-width:0}
+header{flex-wrap:nowrap}
+header select{flex:0 1 auto}
 select,input,textarea,button{font:inherit;color:inherit}
 select,input,textarea{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:12px 14px;min-height:56px;width:100%}
 header select{width:auto;min-height:48px;padding:8px 10px;font-weight:600}
@@ -119,6 +123,7 @@ nav a[aria-current="page"]{color:var(--accent);border-top-color:var(--accent)}
   <header>
     <span class="mark" aria-hidden="true">72h</span>
     <h1 id="title"></h1>
+    <span class="tag" id="demo-tag" title=""></span>
     <label class="sr" for="lang" id="lang-label"></label>
     <select id="lang"></select>
   </header>
@@ -276,6 +281,10 @@ var UI = {
   r_utility_ok: { hu: "Megjelenik az érintett helyeidnél és a Most képernyőn.", en: "Shown for your affected places and on the Now screen.", uk: "Показано для ваших місць і на екрані «Зараз».", de: "Wird bei den betroffenen Orten und unter „Jetzt“ angezeigt." },
   r_service: { hu: "Ez a szolgáltató nem küldhet ilyen szolgáltatásról üzenetet.", en: "This provider may not send messages about this service.", uk: "Цей постачальник не має права надсилати повідомлення про цю послугу.", de: "Dieser Versorger darf keine Nachrichten zu dieser Leistung senden." },
   unverified: { hu: "ellenőrizendő", en: "to be verified", uk: "потребує перевірки", de: "zu prüfen" },
+  demoTag: { hu: "DEMÓ", en: "DEMO", uk: "ДЕМО", de: "DEMO" },
+  demoApp: { hu: "Ez bemutató alkalmazás mintaadatokkal. Azt mutatja meg, mi lenne látható, ha a szolgáltatók szabványos, aláírt formában tennék közzé a kimaradásokat.", en: "This is a demo app with sample data. It shows what you would see if utilities published outages in a standard, signed format.", uk: "Це демонстраційний застосунок із тестовими даними. Він показує, що було б видно, якби постачальники публікували відключення у стандартному підписаному форматі.", de: "Dies ist eine Demo-App mit Beispieldaten. Sie zeigt, was sichtbar wäre, wenn Versorger Störungen in einem einheitlichen, signierten Format veröffentlichen würden." },
+  demoFeed: { hu: "Mi lenne, ha így publikálnák? – mintanap betöltése", en: "What if they published this way? – load a sample day", uk: "А якби публікували так? – завантажити тестовий день", de: "Was wäre, wenn sie so veröffentlichen würden? – Beispieltag laden" },
+  demoFeedNote: { hu: "Betöltöttünk egy kitalált napot: minden mentett helyedre érkezett egy-egy szabványos üzenet a beállított szolgáltatóktól. Minden adat kitalált.", en: "A fictional day was loaded: each of your saved places received a standard message from its providers. All data is made up.", uk: "Завантажено вигаданий день: кожне збережене місце отримало стандартне повідомлення від своїх постачальників. Усі дані вигадані.", de: "Ein fiktiver Tag wurde geladen: Jeder gespeicherte Ort erhielt eine Standardnachricht seiner Versorger. Alle Daten sind erfunden." },
   clear: { hu: "Üzenetek törlése", en: "Clear messages", uk: "Очистити повідомлення", de: "Nachrichten löschen" }
 };
 
@@ -462,18 +471,19 @@ var TOWNS = {
    web/outage/phone are filled only where verified; the rest is left for the provider to supply. */
 var PROVIDERS = {
   eon_bp: { service: "power", name: "E.ON – Elmű Hálózati (Budapest, Pest)", regions: ["HU-BU", "HU-PE"],
-            web: "https://www.eon.hu/", outage: "https://www.eon.hu/pestmegyeihalozat/tudnivalok/energiakozeli-informaciok/tervezett-aramszunetek.html", notify: "https://www.eon.hu/ugyintezes" },
+            web: "https://www.eon.hu/", outage: "https://www.eon.hu/hu/uzleti-es-kozigazgatasi/aram/segithetunk/aramszunetek.html", notify: "https://www.eon.hu/ugyintezes" },
   eon_ed: { service: "power", name: "E.ON Észak-dunántúli Áramhálózati", regions: ["HU-GS", "HU-KE", "HU-VE", "HU-FE", "HU-VA", "HU-ZA"],
             web: "https://www.eon.hu/", notify: "https://www.eon.hu/ugyintezes" },
   eon_dd: { service: "power", name: "E.ON Dél-dunántúli Áramhálózati", regions: ["HU-BA", "HU-SO", "HU-TO", "HU-ZA"],
             web: "https://www.eon.hu/", notify: "https://www.eon.hu/ugyintezes" },
   emasz:  { service: "power", name: "MVM Émász Áramhálózati", regions: ["HU-NO", "HU-HE", "HU-BZ", "HU-PE"],
-            web: "https://www.mvmemasz.hu", phone: "06 80 42 43 44" },
+            web: "https://mvmemaszhalozat.hu", outage: "https://mvmemaszhalozat.hu/ugyfeleinknek/hasznos-informaciok/tervezett-aramszunetek", phone: "06 80 42 43 44" },
   demasz: { service: "power", name: "MVM Démász Áramhálózati", regions: ["HU-BK", "HU-CS", "HU-BE", "HU-PE"],
-            phone: "06 62 565 881" },
-  titasz: { service: "power", name: "Opus Titász Áramhálózati", regions: ["HU-HB", "HU-SZ", "HU-JN"] },
+            web: "https://mvmhalozat.hu", outage: "https://mvmhalozat.hu/aram/oldalak/5925", phone: "06 62 565 881" },
+  titasz: { service: "power", name: "Opus Titász Áramhálózati", regions: ["HU-HB", "HU-SZ", "HU-JN"],
+            web: "https://www.opustitasz.hu", outage: "https://www.opustitasz.hu/aramszunet-kereso", phone: "06 80 210 310" },
   fv:     { service: "water", name: "Fővárosi Vízművek", regions: ["HU-BU", "HU-PE"],
-            web: "https://www.vizmuvek.hu", outage: "https://vizmuvek.hu/en/home/utility-customer-service/service-coverage/failure-notice" },
+            web: "https://www.vizmuvek.hu", outage: "https://www.vizmuvek.hu/hu/kezdolap/informaciok/munkaterkep-hol-dolgozunk" },
   tettye: { service: "water", name: "Tettye Forrásház (Pécs)", regions: ["HU-BA"], web: "https://tettyeforrashaz.hu" },
   w_debrecen: { service: "water", name: "Debreceni Vízmű", regions: ["HU-HB"] },
   w_szeged:   { service: "water", name: "Szegedi Vízmű", regions: ["HU-CS"] },
@@ -755,7 +765,8 @@ function viewTervem() {
 
 function viewFrissitesek() {
   var alertCount = state.msgs.filter(function (m) { return m.ok; }).length;
-  var html = '<section class="card"><h3>' + t("packs") + "</h3>" +
+  var html = '<p class="note">' + t("demoApp") + "</p>" +
+    '<section class="card"><h3>' + t("packs") + "</h3>" +
     '<div class="lane advice"><strong>' + t("lane_advice") + '</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.osz.name)) + '</span><span class="muted">' + t("scopeNational") + " · " + t("version") + " " + ADVICE.version + "</span></div>" +
     '<div class="lane local"><strong>' + t("lane_local") + " · " + esc(COUNTIES[curRegion()]) + ' <span class="tag">' + t("sample") + '</span></strong><span class="muted">' + t("publisher") + ": " + t("noSteward") + '</span><span class="muted">' + t("scopeRegion") + "</span></div>" +
     '<div class="lane alert"><strong>' + t("lane_alert") + " (" + alertCount + ')</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.ugy.name)) + '</span><span class="muted">' + t("scopeNational") + "</span></div>" +
@@ -767,6 +778,7 @@ function viewFrissitesek() {
     (PROVIDERS[herePlace().power] ? '<button class="btn plain" data-act="demo" data-n="4">' + t("demoUtility", { p: esc(PROVIDERS[herePlace().power].name), t: esc(TOWNS[herePlace().town].name) }) + "</button>" : "") +
     (PROVIDERS[herePlace().water] ? '<button class="btn plain" data-act="demo" data-n="5">' + t("demoWater", { p: esc(PROVIDERS[herePlace().water].name), t: esc(TOWNS[herePlace().town].name) }) + "</button>" : "") +
     '<button class="btn plain" data-act="demo" data-n="6">' + t("demoWrong") + "</button>" +
+    '<button class="btn" data-act="demo" data-n="7">' + t("demoFeed") + "</button>" +
     '<p class="note">' + t("protoNote") + "</p></section>";
   var log = state.msgs.concat(state.notices).sort(function (a, b) { return a.at - b.at; });
   if (log.length) {
@@ -788,6 +800,7 @@ function render(keepScroll) {
   document.title = t("title");
   document.getElementById("title").textContent = t("title");
   document.getElementById("lang-label").textContent = t("language");
+  var dt = document.getElementById("demo-tag"); dt.textContent = t("demoTag"); dt.title = t("demoApp");
   main.innerHTML = VIEWS[scr]();
   main.scrollTop = keepScroll ? y : 0;
   document.getElementById("nav").innerHTML = SCREENS.map(function (s) {
@@ -840,7 +853,15 @@ document.addEventListener("click", function (ev) {
     else if (n === "3") receive("x9k2", curRegion());
     else if (n === "4") receiveUtility(hp.power, "power", "fault", "c4", hp.town, 3);
     else if (n === "5") receiveUtility(hp.water, "water", "planned", "c2", hp.town, 6);
-    else receiveUtility("titasz", "power", "fault", "c1", "budapest", 2);
+    else if (n === "6") receiveUtility("titasz", "power", "fault", "c1", "budapest", 2);
+    else {
+      var causes = { power: ["c4", "c2"], water: ["c3", "c2"] };
+      state.places.forEach(function (pl, i) {
+        if (pl.power) receiveUtility(pl.power, "power", i % 2 ? "planned" : "fault", causes.power[i % 2], pl.town, 3 + i);
+        if (pl.water) receiveUtility(pl.water, "water", i % 2 ? "fault" : "planned", causes.water[i % 2 ? 0 : 1], pl.town, 5 + i);
+      });
+      el.insertAdjacentHTML("afterend", '<p class="muted">' + t("demoFeedNote") + "</p>");
+    }
     render(true);
   }
   else if (act === "clear") { state.msgs = []; state.notices = []; store.set("msgs", []); store.set("notices", []); render(true); }

@@ -83,6 +83,32 @@ Az SMS- és e-mail-feliratkozást **egy helyen**, az országos továbbítónál 
 
 A szolgáltatók meglévő, ingatlanhoz kötött értesítései (például az E.ON online ügyfélszolgálatán beállítható SMS és e-mail) megmaradnak. Ez a szabvány nem kiváltja őket, hanem egységes, nyelvfüggetlen csatornát ad melléjük.
 
+## 5/a. RSS/Atom kimenet
+
+A szolgáltatói JSON-ból a build gépi úton településenkénti RSS/Atom csatornát is előállít:
+
+```
+…/kozmu/{szolgáltató}/{település}.rss
+```
+
+- Egy tétel = egy esemény aktuális állapota; a `guid` az esemény `id`-je, frissítésnél a `pubDate` változik, a helyreállítás (`state: H`) külön tétellel zárja le.
+- A cím és a leírás a kódokból előállított, ember által olvasható szöveg (alapból magyarul), a `link` a teljes JSON-ra mutat.
+- Célja a kompatibilitás: RSS-olvasók, önkormányzati honlapok és hírportálok ezt veszik át, az app a strukturált, aláírt JSON-t használja. Az RSS-ben aláírás nincs, ezért hivatalos forrásként csak a szolgáltató saját domainjéről érvényes.
+- Előkép a gyakorlatból: a DMRV hírcsatornája (dmrvzrt.hu/hu/rss/hirek) már ma RSS-ben közli a vízhiányokat, de szűretlenül, vegyes hírek között — a településenkénti bontás és a kódolt tartalom ezt teszi géppel feldolgozhatóvá.
+
+## 5/b. A mai helyzet (2026. november, felmérés)
+
+| Szolgáltató | Fő csatorna | Értesítés | Géppel olvasható |
+|---|---|---|---|
+| E.ON | térképes kereső (eon.hu) | online felület, digitális csatornák | nincs |
+| MVM Démász | térkép (mvmhalozat.hu) | 2026 augusztusától postaládás szórólap, lépcsőházi hirdetmény | nincs |
+| MVM Émász | térkép (mvmemaszhalozat.hu) | e-mail, e-mailben igényelve (vevőazonosító + mérésipont-azonosító kell) | nincs |
+| Opus Titász | áramszünet-kereső (opustitasz.hu) | saját mobilapp push értesítéssel | nincs |
+| Fővárosi Vízművek | munkatérkép (vizmuvek.hu) | honlap, 3 nappal előre; mobilapp | nincs |
+| DMRV | hírek + RSS | – | részben (RSS, szűretlen) |
+
+Mind a négy áramelosztó másképp értesít, és egyiknél sincs meghirdetett API vagy RSS; a független tervezettaramszunet.hu aggregátor csak a felületek lekérdezésével dolgozik, és maga is tájékoztató jellegűnek minősíti az adatait. Ez a szabvány ezt a hiányt tölti be.
+
 ## 6. Helyek a telefonon
 
 - A lakos tetszőleges számú helyet ment (otthon, nyaraló, szülők lakása, úti cél), mindegyikhez egy települést és opcionálisan egy KCR-címazonosítót.

@@ -37,6 +37,8 @@ Az eredeti fájlok a `madcsaba/kh` repó `claude/confident-cray-gd9rcq` ágának
 
 ## Mobilalkalmazás (`app/`)
 
+**Demó:** az alkalmazás mintaadatokkal fut, és azt mutatja be, mi lenne látható, ha a szolgáltatók a `docs/kozmu-ertesites.md` szerinti szabványos, aláírt formában publikálnák a kimaradásokat. Nem éles szolgáltatás.
+
 Elérhető: `https://madcsaba.github.io/felkeszules-kezikonyv/app/`
 
 - **Most** – vészhelyzeti teendők nagy gombokkal, 112-es hívógomb, aktív riasztások és szolgáltatói kimaradások; a *Nincs áram* és *Nincs víz* kártya megmutatja az adott hely állapotát és a szolgáltató oldalát
