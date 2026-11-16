@@ -138,4 +138,9 @@
     verdict.textContent = text;
     verdict.className = "verdict " + cls;
   }
+
+  /* ---------- Offline működés ---------- */
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
 })();

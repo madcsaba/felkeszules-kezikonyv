@@ -7,6 +7,12 @@ Statikus, függőség nélküli weboldal (HTML + CSS + JS) a „Felkészülés v
 - `index.html` – a teljes kézikönyv, fejezetenként (`#viz`, `#elelmiszer`, … horgonyokkal)
 - `style.css` – megjelenés: világos/sötét téma, mobilnézet, nyomtatási (PDF) nézet
 - `script.js` – tartalomjegyzék-kiemelés, mobilmenü, kipipálható listák (csak a böngészőben tárolva), 10 pontos teszt pontozása
+- `app/` – mobilalkalmazás (PWA): 5 képernyő, 4 nyelv (hu, en, uk, de), telepíthető a kezdőképernyőre
+- `docs/peticio-szolgaltatok.md` – közérthető petíció a közműszolgáltatókhoz
+- `docs/szakpolitikai-javaslat.md` – szakpolitikai javaslat a minisztériumoknak, szabványjavaslattal és nemzetközi példákkal
+- `docs/minta/` – mintafájlok (JSON, RSS, SMS-forma) a szabványhoz, kitalált adatokkal
+- `docs/kozmu-ertesites.md` – javasolt szabvány a közmű-kimaradási értesítésekhez (CAP-alapú, helyalapú, aláírt, SMS-be is belefér)
+- `sw.js` – service worker: az app és a kézikönyv internet nélkül is megnyílik
 - `.nojekyll` – a GitHub Pages ne futtassa a Jekyllt
 
 ## Közzététel GitHub Pages-en
@@ -26,16 +32,32 @@ python3 -m http.server -d . 8000
 
 ## Szerkesztés
 
-A szöveg közvetlenül az `index.html`-ben van. A **15. fejezet** két dolgot tartalmazza:
+A szöveg közvetlenül az `index.html`-ben van:
 
-- a magyarországi hivatalos források listáját (a „Hivatalos magyar források" blokk);
+- a magyarországi hivatalos források a Források fejezetben találhatók;
 - a **„Közzététel előtt a hazai hatóságoktól pontosítandó"** kipipálható listát: minden
   pontnál meg van adva, **kitől és hol** kérdezhetsz. Egy pont akkor zárható, ha a válasz
   megvan – a kipipálás a böngészőben tárolódik.
 
-A korábbi `<span class="verify">ellenőrizendő</span>` jelölés megszűnt: ahol lehetett,
-hivatalos forrásból pontosítottunk, ahol nem, ott a hatóság megkeresése a megoldás.
+A `<span class="verify">ellenőrizendő</span>` jelölések nyitott kérdéseket mutatnak.
+Ezek csak az adott állítást alátámasztó hivatalos forrás ellenőrzése után zárhatók le.
 
 ## Forrás
 
 Az eredeti fájlok a `madcsaba/kh` repó `claude/confident-cray-gd9rcq` ágának `docs/` mappájában készültek.
+
+## Mobilalkalmazás (`app/`)
+
+**Demó:** az alkalmazás mintaadatokkal fut, és azt mutatja be, mi lenne látható, ha a szolgáltatók a `docs/kozmu-ertesites.md` szerinti szabványos, aláírt formában publikálnák a kimaradásokat. Nem éles szolgáltatás.
+
+Elérhető: `https://madcsaba.github.io/felkeszules-kezikonyv/app/`
+
+- **Most** – vészhelyzeti teendők nagy gombokkal, 112-es hívógomb, aktív riasztások és szolgáltatói kimaradások; a *Nincs áram* és *Nincs víz* kártya megmutatja az adott hely állapotát és a szolgáltató oldalát
+- **Felkészülés** – vízkalkulátor, kipipálható listák
+- **Helyben** – több hely (otthon, nyaraló, úti cél), helyenként áram- és vízszolgáltató, értesítési beállítások, segélyhívók, helyi adatok
+- **Tervem** – családi terv (csak a telefonon tárolódik)
+- **Frissítések** – letöltött csomagok kiadóval és hatókörrel, rövid üzenet próbája
+
+Telepítés: a böngésző menüjében *Hozzáadás a kezdőképernyőhöz*. Első megnyitás után internet nélkül is működik.
+
+Az adatok négy külön sávban vannak (tanácsok, helyi adatok, riasztások, szolgáltatói értesítések), mindegyiknek saját kiadója és hatóköre van. A helyi adatok egyelőre **mintaadatok**; a szolgáltatói elérhetőségek közül csak az ellenőrzöttek vannak kitöltve; a digitális aláírás ellenőrzése még nincs bekötve. Az ukrán és a német fordítás anyanyelvi lektorálásra vár.

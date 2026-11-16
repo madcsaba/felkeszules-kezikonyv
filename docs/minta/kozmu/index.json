@@ -1,0 +1,14 @@
+{
+  "v": "K1",
+  "demo": true,
+  "updated": "2026-11-16T10:40:00+01:00",
+  "providers": [
+    { "id": "eon_bp", "name": "E.ON – Elmű Hálózati", "service": "E",
+      "settlements": ["budapest", "…"], "feed": "eon_bp/{settlement}.json",
+      "cert": "DEMO-CERT-eon_bp" },
+    { "id": "fv", "name": "Fővárosi Vízművek", "service": "V",
+      "settlements": ["budapest", "…"], "feed": "fv/{settlement}.json",
+      "cert": "DEMO-CERT-fv" }
+  ],
+  "note": "A települések éles rendszerben KSH-településazonosítóval szerepelnek; a demóban olvasható névvel."
+}
