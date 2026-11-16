@@ -26,7 +26,15 @@ python3 -m http.server -d . 8000
 
 ## Szerkesztés
 
-A szöveg közvetlenül az `index.html`-ben van. Az ellenőrizendő adatokat a `<span class="verify">ellenőrizendő</span>` jelöli – ezeket közzététel előtt érdemes hivatalos forrásból pontosítani.
+A szöveg közvetlenül az `index.html`-ben van. A **15. fejezet** két dolgot tartalmazza:
+
+- a magyarországi hivatalos források listáját (a „Hivatalos magyar források" blokk);
+- a **„Közzététel előtt a hazai hatóságoktól pontosítandó"** kipipálható listát: minden
+  pontnál meg van adva, **kitől és hol** kérdezhetsz. Egy pont akkor zárható, ha a válasz
+  megvan – a kipipálás a böngészőben tárolódik.
+
+A korábbi `<span class="verify">ellenőrizendő</span>` jelölés megszűnt: ahol lehetett,
+hivatalos forrásból pontosítottunk, ahol nem, ott a hatóság megkeresése a megoldás.
 
 ## Forrás
 
