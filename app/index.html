@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Felkészülés app</title>
+<meta name="theme-color" content="#1f5f5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+/* Layout: one phone-width column, fixed header and bottom tab bar, one job per screen. */
+:root{
+  --bg:#f3f6f5; --surface:#ffffff; --ink:#132120; --muted:#52625e; --line:#d3dcd9;
+  --accent:#1f5f5b; --on-accent:#ffffff;
+  --danger:#b3261e; --danger-bg:#fdecea;
+  --warn:#7a5200; --warn-bg:#fff2d1;
+  --ok:#1e6b3f; --ok-bg:#e3f4ea;
+  --lane-advice:#2e7d4f; --lane-local:#1f5fa8; --lane-alert:#c2571a;
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1615; --surface:#18221f; --ink:#eef4f2; --muted:#a4b3af; --line:#2d3b38;
+    --accent:#74cbc1; --on-accent:#06201d;
+    --danger:#ffb4a9; --danger-bg:#4a1410;
+    --warn:#ffd27a; --warn-bg:#3d2c00;
+    --ok:#8fdcae; --ok-bg:#12331f;
+    --lane-advice:#7fd3a0; --lane-local:#8fbdf2; --lane-alert:#f2a877;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1615; --surface:#18221f; --ink:#eef4f2; --muted:#a4b3af; --line:#2d3b38;
+  --accent:#74cbc1; --on-accent:#06201d;
+  --danger:#ffb4a9; --danger-bg:#4a1410;
+  --warn:#ffd27a; --warn-bg:#3d2c00;
+  --ok:#8fdcae; --ok-bg:#12331f;
+  --lane-advice:#7fd3a0; --lane-local:#8fbdf2; --lane-alert:#f2a877;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.45;display:flex;justify-content:center}
+.app{width:100%;max-width:520px;height:100%;display:flex;flex-direction:column;background:var(--bg)}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.mark{background:var(--accent);color:var(--on-accent);font-weight:700;border-radius:10px;padding:6px 9px;font-size:16px;letter-spacing:.02em}
+header h1{font-size:20px;margin:0;flex:1;min-width:0;overflow-wrap:anywhere}
+select,input,textarea,button{font:inherit;color:inherit}
+select,input,textarea{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:12px 14px;min-height:56px;width:100%}
+header select{width:auto;min-height:48px;padding:8px 10px;font-weight:600}
+textarea{min-height:96px;resize:vertical}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+h2{font-size:26px;line-height:1.2;margin:0;text-wrap:balance}
+h3{font-size:20px;margin:0;text-wrap:balance}
+p{margin:0}
+.muted{color:var(--muted);font-size:16px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.big{display:flex;align-items:center;gap:16px;width:100%;min-height:76px;padding:14px 16px;background:var(--surface);border:2px solid var(--line);border-radius:16px;font-size:22px;font-weight:650;text-align:left;cursor:pointer}
+.big svg{flex:none;width:36px;height:36px;color:var(--accent)}
+.big .chev{margin-left:auto;width:24px;height:24px;color:var(--muted)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:56px;padding:12px 16px;border-radius:14px;border:2px solid var(--accent);background:var(--accent);color:var(--on-accent);font-weight:650;cursor:pointer;text-decoration:none;text-align:center}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.plain{border-color:var(--line);background:var(--surface);color:var(--ink);justify-content:flex-start;text-align:left;font-weight:600}
+.call{background:var(--danger);border-color:var(--danger);color:var(--surface);font-size:20px}
+.banner{background:var(--danger-bg);border:2px solid var(--danger);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.banner strong{color:var(--danger);font-size:16px;text-transform:uppercase;letter-spacing:.04em}
+.banner .msg{font-size:22px;font-weight:650;line-height:1.3}
+.calm{background:var(--ok-bg);color:var(--ok);border-radius:14px;padding:12px 16px;font-weight:600;font-size:16px}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:s}
+ol.steps li{counter-increment:s;display:flex;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:20px;line-height:1.35}
+ol.steps li::before{content:counter(s);flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:700;display:flex;align-items:center;justify-content:center}
+.check{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+.check:first-of-type{border-top:0}
+.check input{flex:none;width:30px;height:30px;min-height:0;padding:0;margin:0;accent-color:var(--accent)}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button,.seg button{min-width:56px;min-height:56px;border-radius:14px;border:2px solid var(--line);background:var(--surface);font-size:24px;font-weight:700;cursor:pointer}
+.stepper output{min-width:40px;text-align:center;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:8px}
+.seg button{font-size:20px;padding:0 18px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.result{font-size:26px;font-weight:700;line-height:1.2}
+.num{display:flex;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.num:first-of-type{border-top:0}
+.num b{font-size:30px;min-width:76px;color:var(--danger);font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.05em;border-radius:8px;padding:3px 8px;background:var(--warn-bg);color:var(--warn)}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.tag.no{background:var(--danger-bg);color:var(--danger)}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:14px;padding:12px 16px;font-size:16px}
+.rec{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.rec:first-of-type{border-top:0}
+.lane{border-left:6px solid var(--line);border-radius:0;padding:4px 0 4px 14px;display:flex;flex-direction:column;gap:2px}
+.lane.advice{border-color:var(--lane-advice)} .lane.local{border-color:var(--lane-local)} .lane.alert{border-color:var(--lane-alert)}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;overflow-wrap:anywhere;display:block}
+nav{display:flex;background:var(--surface);border-top:1px solid var(--line)}
+nav a{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 10px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;overflow-wrap:anywhere;text-align:center;border-top:3px solid transparent}
+nav a svg{width:26px;height:26px}
+nav a[aria-current="page"]{color:var(--accent);border-top-color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:360px){body{font-size:17px}.big{font-size:20px}nav a{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <span class="mark" aria-hidden="true">72h</span>
+    <h1 id="title"></h1>
+    <label class="sr" for="lang" id="lang-label"></label>
+    <select id="lang"></select>
+  </header>
+  <main id="main" tabindex="-1"></main>
+  <nav id="nav" aria-label="Menu"></nav>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   Three separate data lanes, as in the architecture:
+   ADVICE  – national editorial office (advice, all languages)
+   LOCAL   – data stewards (language-neutral records per region)
+   ALERTS  – duty office (template id + parameters, no free text)
+   ============================================================ */
+
+var LANGS = { hu: "Magyar", en: "English", uk: "Українська", de: "Deutsch" };
+
+var UI = {
+  title: { hu: "Felkészülés", en: "Preparedness", uk: "Готовність", de: "Vorsorge" },
+  language: { hu: "Nyelv", en: "Language", uk: "Мова", de: "Sprache" },
+  nav_most: { hu: "Most", en: "Now", uk: "Зараз", de: "Jetzt" },
+  nav_felkeszules: { hu: "Felkészülés", en: "Prepare", uk: "Підготовка", de: "Vorsorge" },
+  nav_helyben: { hu: "Helyben", en: "Local", uk: "Поруч", de: "Vor Ort" },
+  nav_tervem: { hu: "Tervem", en: "My plan", uk: "Мій план", de: "Mein Plan" },
+  nav_frissitesek: { hu: "Frissítések", en: "Updates", uk: "Оновлення", de: "Updates" },
+
+  whatHappened: { hu: "Mi történt?", en: "What is happening?", uk: "Що сталося?", de: "Was ist passiert?" },
+  call112: { hu: "Életveszély? Hívd: 112", en: "Life in danger? Call 112", uk: "Загроза життю? Телефонуйте 112", de: "Lebensgefahr? 112 anrufen" },
+  back: { hu: "Vissza", en: "Back", uk: "Назад", de: "Zurück" },
+  noAlerts: { hu: "Nincs érvényes riasztás a területeden.", en: "No active alerts for your area.", uk: "Для вашої місцевості немає чинних попереджень.", de: "Keine aktuellen Warnungen für Ihr Gebiet." },
+  alert: { hu: "Riasztás", en: "Alert", uk: "Попередження", de: "Warnung" },
+  publisher: { hu: "Kiadó", en: "Publisher", uk: "Видавець", de: "Herausgeber" },
+  validUntil: { hu: "Érvényes eddig", en: "Valid until", uk: "Чинне до", de: "Gültig bis" },
+  source: { hu: "Forrás", en: "Source", uk: "Джерело", de: "Quelle" },
+  advicePack: { hu: "Országos tanácscsomag", en: "National advice pack", uk: "Національний пакет порад", de: "Nationales Ratgeberpaket" },
+
+  calcTitle: { hu: "Mennyi víz kell?", en: "How much water do you need?", uk: "Скільки води потрібно?", de: "Wie viel Wasser brauchen Sie?" },
+  persons: { hu: "Hány fő?", en: "People", uk: "Кількість людей", de: "Personen" },
+  days: { hu: "Hány napra?", en: "Days", uk: "Днів", de: "Tage" },
+  calcResult: { hu: "{l} liter ivó- és főzővíz", en: "{l} litres of water for drinking and cooking", uk: "{l} л води для пиття та приготування їжі", de: "{l} Liter Wasser zum Trinken und Kochen" },
+  calcNote: { hu: "Fejenként napi 3 literrel számolva. Kánikulában 4 liter.", en: "Based on 3 litres per person per day. In a heatwave, 4 litres.", uk: "З розрахунку 3 л на людину на добу. У спеку — 4 л.", de: "Berechnet mit 3 Litern pro Person und Tag. Bei Hitze 4 Liter." },
+  fewer: { hu: "Kevesebb", en: "Fewer", uk: "Менше", de: "Weniger" },
+  more: { hu: "Több", en: "More", uk: "Більше", de: "Mehr" },
+  done: { hu: "{a} / {b} kész", en: "{a} / {b} done", uk: "{a} / {b} готово", de: "{a} / {b} erledigt" },
+  fullBook: { hu: "A teljes kézikönyv (magyarul)", en: "Full handbook (in Hungarian)", uk: "Повний посібник (угорською)", de: "Vollständiges Handbuch (auf Ungarisch)" },
+
+  region: { hu: "Hol laksz?", en: "Where do you live?", uk: "Де ви живете?", de: "Wo wohnen Sie?" },
+  regionNote: { hu: "A helyet csak ez a telefon tudja. Nem küldjük el sehová.", en: "Your location stays on this phone. It is not sent anywhere.", uk: "Місце зберігається лише на цьому телефоні. Нікуди не надсилається.", de: "Der Ort bleibt auf diesem Telefon. Er wird nirgendwohin gesendet." },
+  emergencyNumbers: { hu: "Segélyhívók", en: "Emergency numbers", uk: "Екстрені номери", de: "Notrufnummern" },
+  n112: { hu: "Általános segélyhívó", en: "General emergency", uk: "Єдиний екстрений номер", de: "Allgemeiner Notruf" },
+  n104: { hu: "Mentők", en: "Ambulance", uk: "Швидка допомога", de: "Rettungsdienst" },
+  n105: { hu: "Tűzoltóság", en: "Fire service", uk: "Пожежна служба", de: "Feuerwehr" },
+  n107: { hu: "Rendőrség", en: "Police", uk: "Поліція", de: "Polizei" },
+  localData: { hu: "Helyi adatok", en: "Local information", uk: "Місцева інформація", de: "Lokale Informationen" },
+  sample: { hu: "MINTA", en: "SAMPLE", uk: "ЗРАЗОК", de: "MUSTER" },
+  localNote: { hu: "Ezek mintaadatok. A valódi adatokat a helyi adatgazda (vármegye, önkormányzat, közmű) tölti fel és írja alá.", en: "These are sample entries. Real data will be uploaded and signed by the local data steward (county, municipality, utility).", uk: "Це зразки. Справжні дані завантажить і підпише місцевий розпорядник даних (область, громада, комунальне підприємство).", de: "Dies sind Musterdaten. Echte Daten lädt die lokal verantwortliche Stelle (Komitat, Gemeinde, Versorger) hoch und signiert sie." },
+  type_shelter: { hu: "Óvóhely", en: "Shelter", uk: "Укриття", de: "Schutzraum" },
+  type_water: { hu: "Vízosztó pont", en: "Water distribution point", uk: "Пункт видачі води", de: "Wasserausgabestelle" },
+  type_medical: { hu: "Orvosi ügyelet", en: "Medical duty service", uk: "Черговий лікар", de: "Ärztlicher Notdienst" },
+  type_assembly: { hu: "Gyülekezőpont", en: "Assembly point", uk: "Пункт збору", de: "Sammelpunkt" },
+  samplePlace: { hu: "Minta helyszín {n}", en: "Sample location {n}", uk: "Зразкове місце {n}", de: "Musterort {n}" },
+
+  planTitle: { hu: "Családi terv", en: "Family plan", uk: "Сімейний план", de: "Familienplan" },
+  planNote: { hu: "Csak ezen a telefonon tárolódik.", en: "Stored only on this phone.", uk: "Зберігається лише на цьому телефоні.", de: "Wird nur auf diesem Telefon gespeichert." },
+  f_meet1: { hu: "Találkozási pont a közelben", en: "Meeting point nearby", uk: "Місце зустрічі поблизу", de: "Treffpunkt in der Nähe" },
+  f_meet2: { hu: "Találkozási pont távolabb", en: "Meeting point further away", uk: "Місце зустрічі подалі", de: "Treffpunkt weiter entfernt" },
+  f_cname: { hu: "Kit hívunk, ha szétszakadunk?", en: "Who do we call if we get separated?", uk: "Кому телефонуємо, якщо загубимося?", de: "Wen rufen wir an, wenn wir getrennt werden?" },
+  f_cphone: { hu: "Telefonszáma", en: "Their phone number", uk: "Номер телефону", de: "Telefonnummer" },
+  f_kids: { hu: "Ki hozza el a gyerekeket?", en: "Who picks up the children?", uk: "Хто забирає дітей?", de: "Wer holt die Kinder ab?" },
+  f_meds: { hu: "Gyógyszerek, allergiák", en: "Medicines, allergies", uk: "Ліки, алергії", de: "Medikamente, Allergien" },
+  f_shut: { hu: "Hol a víz, a gáz és a villany főelzárója?", en: "Where are the water, gas and power shut-offs?", uk: "Де перекривається вода, газ, електрика?", de: "Wo sind die Hauptabsperrungen für Wasser, Gas und Strom?" },
+  copy: { hu: "Terv másolása szövegként", en: "Copy plan as text", uk: "Скопіювати план як текст", de: "Plan als Text kopieren" },
+  copied: { hu: "Kimásolva.", en: "Copied.", uk: "Скопійовано.", de: "Kopiert." },
+  copyFail: { hu: "Nem sikerült másolni. Jelöld ki a szöveget lent.", en: "Copying failed. Select the text below.", uk: "Не вдалося скопіювати. Виділіть текст нижче.", de: "Kopieren fehlgeschlagen. Markieren Sie den Text unten." },
+
+  packs: { hu: "Letöltött csomagok", en: "Downloaded packs", uk: "Завантажені пакети", de: "Heruntergeladene Pakete" },
+  lane_advice: { hu: "Tanácsok", en: "Advice", uk: "Поради", de: "Ratschläge" },
+  lane_local: { hu: "Helyi adatok", en: "Local information", uk: "Місцева інформація", de: "Lokale Informationen" },
+  lane_alert: { hu: "Riasztások", en: "Alerts", uk: "Попередження", de: "Warnungen" },
+  noSteward: { hu: "Még nincs adatgazda", en: "No data steward yet", uk: "Розпорядника даних ще немає", de: "Noch keine verantwortliche Stelle" },
+  scopeNational: { hu: "Hatókör: országos", en: "Scope: national", uk: "Сфера дії: вся країна", de: "Geltungsbereich: landesweit" },
+  scopeRegion: { hu: "Hatókör: csak a saját területe", en: "Scope: own area only", uk: "Сфера дії: лише власна територія", de: "Geltungsbereich: nur eigenes Gebiet" },
+  version: { hu: "Verzió", en: "Version", uk: "Версія", de: "Version" },
+  tryTitle: { hu: "Próbáld ki: rövid üzenet fogadása", en: "Try it: receive a short message", uk: "Спробуйте: отримати коротке повідомлення", de: "Ausprobieren: Kurznachricht empfangen" },
+  tryNote: { hu: "Az üzenet csak kódokat tartalmaz. A szöveget a telefon állítja össze a te nyelveden.", en: "The message carries only codes. The phone builds the text in your language.", uk: "Повідомлення містить лише коди. Текст телефон складає вашою мовою.", de: "Die Nachricht enthält nur Codes. Das Telefon erstellt den Text in Ihrer Sprache." },
+  demo1: { hu: "Országos ügyelet: vízforralás a területemen", en: "National duty office: boil water in my area", uk: "Національна чергова служба: кип'ятити воду в моїй місцевості", de: "Nationale Leitstelle: Wasser abkochen in meinem Gebiet" },
+  demo2: { hu: "Helyi adatgazda másik vármegyének üzen", en: "Local steward sends to another county", uk: "Місцевий розпорядник надсилає іншій області", de: "Lokale Stelle sendet an ein anderes Komitat" },
+  demo3: { hu: "Ismeretlen feladó", en: "Unknown sender", uk: "Невідомий відправник", de: "Unbekannter Absender" },
+  accepted: { hu: "ELFOGADVA", en: "ACCEPTED", uk: "ПРИЙНЯТО", de: "ANGENOMMEN" },
+  rejected: { hu: "ELUTASÍTVA", en: "REJECTED", uk: "ВІДХИЛЕНО", de: "ABGELEHNT" },
+  r_unknown: { hu: "Ismeretlen kiadó. Nincs tanúsítványa.", en: "Unknown publisher. No certificate.", uk: "Невідомий видавець. Немає сертифіката.", de: "Unbekannter Herausgeber. Kein Zertifikat." },
+  r_scope: { hu: "Ez a kiadó nem küldhet ilyen üzenetet erre a területre.", en: "This publisher may not send this kind of message to this area.", uk: "Цей видавець не має права надсилати такі повідомлення для цієї місцевості.", de: "Dieser Herausgeber darf diese Art Nachricht nicht für dieses Gebiet senden." },
+  r_ok: { hu: "Megjelenik a Most képernyőn.", en: "Shown on the Now screen.", uk: "Показано на екрані «Зараз».", de: "Wird unter „Jetzt“ angezeigt." },
+  bytes: { hu: "{n} bájt", en: "{n} bytes", uk: "{n} байт", de: "{n} Byte" },
+  protoNote: { hu: "Prototípus: a hatókör-ellenőrzés működik, a digitális aláírás ellenőrzése még nincs bekötve.", en: "Prototype: scope checks work; digital signature verification is not wired in yet.", uk: "Прототип: перевірка сфери дії працює, перевірку цифрового підпису ще не підключено.", de: "Prototyp: Die Bereichsprüfung funktioniert, die Prüfung der digitalen Signatur ist noch nicht angebunden." },
+  clear: { hu: "Üzenetek törlése", en: "Clear messages", uk: "Очистити повідомлення", de: "Nachrichten löschen" }
+};
+
+/* ---------- Lane 1: ADVICE (publisher: national editorial office) ---------- */
+var ADVICE = {
+  version: "2026.11.1",
+  issuer: "osz",
+  cards: [
+    { id: "power", icon: "bolt",
+      title: { hu: "Nincs áram", en: "Power cut", uk: "Немає світла", de: "Stromausfall" },
+      steps: {
+        hu: ["Zseblámpát használj. Gyertyát ne hagyj felügyelet nélkül.",
+             "A hűtőt és a fagyasztót ne nyitogasd. Először a friss ételt edd meg.",
+             "Hidegben húzódjatok egy szobába, a többi ajtót csukd be.",
+             "Grillt, gázégőt, aggregátort soha ne használj zárt térben.",
+             "Kapcsold be az elemes rádiót. A telefonnal takarékoskodj."],
+        en: ["Use a torch. Never leave a candle unattended.",
+             "Keep the fridge and freezer closed. Eat fresh food first.",
+             "In the cold, gather in one room and close the other doors.",
+             "Never use a barbecue, gas burner or generator indoors.",
+             "Turn on a battery radio. Save your phone battery."],
+        uk: ["Користуйтеся ліхтариком. Не залишайте свічку без нагляду.",
+             "Не відчиняйте холодильник і морозильник без потреби. Спершу з'їжте свіжі продукти.",
+             "У холод зберіться в одній кімнаті, решту дверей зачиніть.",
+             "Ніколи не користуйтеся грилем, газовим пальником чи генератором у приміщенні.",
+             "Увімкніть радіо на батарейках. Бережіть заряд телефона."],
+        de: ["Benutzen Sie eine Taschenlampe. Lassen Sie Kerzen nie unbeaufsichtigt.",
+             "Kühlschrank und Gefriertruhe geschlossen halten. Zuerst frische Lebensmittel essen.",
+             "Bei Kälte in einem Raum zusammenbleiben, die anderen Türen schließen.",
+             "Grill, Gasbrenner oder Stromaggregat niemals in Innenräumen benutzen.",
+             "Batterieradio einschalten. Den Handy-Akku schonen."]
+      } },
+    { id: "water", icon: "drop",
+      title: { hu: "Nincs víz", en: "No water", uk: "Немає води", de: "Kein Wasser" },
+      steps: {
+        hu: ["Ivásra és főzésre fejenként napi 3 literrel számolj.",
+             "Ha nem biztos, hogy iható a víz, forrald fel alaposan.",
+             "A villanybojler vize tisztálkodásra jó, ivásra nem. Előbb áramtalanítsd.",
+             "WC: tegyél dupla szemeteszsákot a csészébe, és szórj bele száraz anyagot.",
+             "Kövesd a vízszolgáltató utasításait. A vízosztó pontokat a Helyben fülön találod."],
+        en: ["Allow 3 litres per person per day for drinking and cooking.",
+             "If you are not sure the water is safe, boil it thoroughly.",
+             "Water from an electric boiler is fine for washing, not for drinking. Switch off its power first.",
+             "Toilet: line the bowl with two bin bags and add dry material.",
+             "Follow the water company's instructions. Water points are listed under Local."],
+        uk: ["Розраховуйте 3 л на людину на добу для пиття та приготування їжі.",
+             "Якщо не впевнені, що вода придатна для пиття, добре прокип'ятіть її.",
+             "Вода з електробойлера придатна для миття, але не для пиття. Спершу вимкніть його з мережі.",
+             "Туалет: вкладіть в унітаз два сміттєві пакети й насипте сухого матеріалу.",
+             "Виконуйте вказівки водоканалу. Пункти видачі води — на вкладці «Поруч»."],
+        de: ["Rechnen Sie mit 3 Litern pro Person und Tag zum Trinken und Kochen.",
+             "Wenn unklar ist, ob das Wasser trinkbar ist, gründlich abkochen.",
+             "Wasser aus dem Elektroboiler eignet sich zum Waschen, nicht zum Trinken. Vorher Strom abschalten.",
+             "Toilette: zwei Müllbeutel in die Schüssel legen und trockenes Material hineingeben.",
+             "Folgen Sie den Anweisungen des Wasserversorgers. Ausgabestellen finden Sie unter „Vor Ort“."]
+      } },
+    { id: "siren", icon: "siren",
+      title: { hu: "Szirénát hallok", en: "I hear a siren", uk: "Чую сирену", de: "Sirene ertönt" },
+      steps: {
+        hu: ["Menj be a legközelebbi épületbe, és maradj bent.",
+             "Zárd be az ajtókat és az ablakokat. Kapcsold ki a szellőzést és a klímát.",
+             "Kapcsold be a rádiót, és várd az utasításokat.",
+             "Csak akkor telefonálj, ha muszáj.",
+             "Hatósági utasítás nélkül ne indulj el. Jódtablettát csak utasításra vegyél be."],
+        en: ["Go into the nearest building and stay inside.",
+             "Close doors and windows. Switch off ventilation and air conditioning.",
+             "Turn on the radio and wait for instructions.",
+             "Only make phone calls if you must.",
+             "Do not leave unless the authorities tell you to. Take iodine tablets only when instructed."],
+        uk: ["Зайдіть у найближчу будівлю й залишайтеся всередині.",
+             "Зачиніть двері та вікна. Вимкніть вентиляцію й кондиціонер.",
+             "Увімкніть радіо й чекайте вказівок.",
+             "Телефонуйте лише за крайньої потреби.",
+             "Не виходьте без вказівки влади. Таблетки йоду приймайте лише за вказівкою."],
+        de: ["Gehen Sie in das nächste Gebäude und bleiben Sie drinnen.",
+             "Türen und Fenster schließen. Lüftung und Klimaanlage ausschalten.",
+             "Radio einschalten und auf Anweisungen warten.",
+             "Nur telefonieren, wenn es unbedingt nötig ist.",
+             "Ohne behördliche Anweisung nicht aufbrechen. Jodtabletten nur auf Anweisung einnehmen."]
+      } },
+    { id: "evac", icon: "exit",
+      title: { hu: "Kiürítés", en: "Evacuation", uk: "Евакуація", de: "Evakuierung" },
+      steps: {
+        hu: ["Írd fel az irányt, a célállomást és a gyülekezőpontot.",
+             "Vedd magadhoz a menekülőtáskát és a személyi igazolványt.",
+             "Kapcsold le a berendezéseket, zárd be az ablakokat és az ajtót.",
+             "A hatóság által megadott útvonalon haladj.",
+             "Ha nincs autód, menj a kijelölt gyülekezőpontra.",
+             "Értesítsd a családodat."],
+        en: ["Write down the direction, the destination and the assembly point.",
+             "Take your go bag and your ID card.",
+             "Switch off appliances, close the windows and lock the door.",
+             "Use the route given by the authorities.",
+             "If you have no car, go to the designated assembly point.",
+             "Let your family know."],
+        uk: ["Запишіть напрямок, пункт призначення та пункт збору.",
+             "Візьміть тривожну валізу й посвідчення особи.",
+             "Вимкніть прилади, зачиніть вікна та двері.",
+             "Рухайтеся маршрутом, який вказала влада.",
+             "Якщо немає авто, ідіть до визначеного пункту збору.",
+             "Повідомте родину."],
+        de: ["Notieren Sie Richtung, Ziel und Sammelpunkt.",
+             "Nehmen Sie den Notfallrucksack und den Personalausweis mit.",
+             "Geräte ausschalten, Fenster und Tür schließen.",
+             "Benutzen Sie die von den Behörden angegebene Route.",
+             "Ohne Auto gehen Sie zum festgelegten Sammelpunkt.",
+             "Informieren Sie Ihre Familie."]
+      } },
+    { id: "aid", icon: "cross",
+      title: { hu: "Elsősegély", en: "First aid", uk: "Перша допомога", de: "Erste Hilfe" },
+      steps: {
+        hu: ["Hívd a 112-t.",
+             "Biztosítsd a szabad légutat. Figyeld a légzést és az eszméletet.",
+             "Erős vérzésnél nyomd erősen és folyamatosan a sebet.",
+             "Tartsd melegen a sérültet.",
+             "Ha nem lélegzik, kezdd meg az újraélesztést, és használj defibrillátort (AED)."],
+        en: ["Call 112.",
+             "Keep the airway clear. Watch breathing and consciousness.",
+             "For heavy bleeding, press hard and continuously on the wound.",
+             "Keep the injured person warm.",
+             "If they are not breathing, start CPR and use a defibrillator (AED)."],
+        uk: ["Зателефонуйте 112.",
+             "Забезпечте прохідність дихальних шляхів. Стежте за диханням і свідомістю.",
+             "При сильній кровотечі сильно й безперервно тисніть на рану.",
+             "Тримайте постраждалого в теплі.",
+             "Якщо людина не дихає, почніть реанімацію й скористайтеся дефібрилятором (AED)."],
+        de: ["Rufen Sie 112 an.",
+             "Atemwege freihalten. Atmung und Bewusstsein beobachten.",
+             "Bei starker Blutung fest und dauerhaft auf die Wunde drücken.",
+             "Die verletzte Person warm halten.",
+             "Wenn die Person nicht atmet: Wiederbelebung beginnen und Defibrillator (AED) benutzen."]
+      } }
+  ],
+  lists: [
+    { id: "home", title: { hu: "Otthoni tartalék", en: "Home supplies", uk: "Домашній запас", de: "Vorrat zu Hause" },
+      items: [
+        { id: "h1", hu: "Ivóvíz: fejenként legalább 9–10 liter", en: "Drinking water: at least 9–10 litres per person", uk: "Питна вода: щонайменше 9–10 л на людину", de: "Trinkwasser: mindestens 9–10 Liter pro Person" },
+        { id: "h2", hu: "Tartós, főzés nélkül ehető élelmiszer", en: "Long-life food you can eat without cooking", uk: "Продукти тривалого зберігання, які можна їсти без готування", de: "Haltbare Lebensmittel, die ohne Kochen essbar sind" },
+        { id: "h3", hu: "Kempingfőző, gázpatron, gyufa", en: "Camping stove, gas cartridge, matches", uk: "Туристичний пальник, газовий балон, сірники", de: "Campingkocher, Gaskartusche, Streichhölzer" },
+        { id: "h4", hu: "Elemes vagy tekerős rádió, tartalék elem", en: "Battery or wind-up radio, spare batteries", uk: "Радіо на батарейках або з динамо, запасні батарейки", de: "Batterie- oder Kurbelradio, Ersatzbatterien" },
+        { id: "h5", hu: "Zseblámpa vagy fejlámpa", en: "Torch or head torch", uk: "Ліхтарик або налобний ліхтар", de: "Taschenlampe oder Stirnlampe" },
+        { id: "h6", hu: "Feltöltött powerbank", en: "Charged power bank", uk: "Заряджений павербанк", de: "Geladene Powerbank" },
+        { id: "h7", hu: "Meleg ruha, takaró, hálózsák", en: "Warm clothes, blankets, sleeping bag", uk: "Теплий одяг, ковдри, спальний мішок", de: "Warme Kleidung, Decken, Schlafsack" },
+        { id: "h8", hu: "Házipatika, gyógyszerek legalább 7 napra", en: "First-aid kit, medicines for at least 7 days", uk: "Аптечка, ліки щонайменше на 7 днів", de: "Hausapotheke, Medikamente für mindestens 7 Tage" },
+        { id: "h9", hu: "Higiéniai cikkek, szemeteszsák", en: "Hygiene items, bin bags", uk: "Засоби гігієни, сміттєві пакети", de: "Hygieneartikel, Müllbeutel" },
+        { id: "h10", hu: "Készpénz kis címletekben", en: "Cash in small notes", uk: "Готівка дрібними купюрами", de: "Bargeld in kleinen Scheinen" },
+        { id: "h11", hu: "Papíron a fontos telefonszámok", en: "Important phone numbers on paper", uk: "Важливі номери телефонів на папері", de: "Wichtige Telefonnummern auf Papier" }
+      ] },
+    { id: "bag", title: { hu: "Menekülőtáska", en: "Go bag", uk: "Тривожна валіза", de: "Notfallrucksack" },
+      items: [
+        { id: "b1", hu: "Iratmásolatok vízálló tasakban", en: "Copies of documents in a waterproof pouch", uk: "Копії документів у водонепроникному пакеті", de: "Dokumentenkopien in wasserdichter Hülle" },
+        { id: "b2", hu: "Gyógyszerek, szemüveg, segédeszközök", en: "Medicines, glasses, aids", uk: "Ліки, окуляри, допоміжні засоби", de: "Medikamente, Brille, Hilfsmittel" },
+        { id: "b3", hu: "Víz és élelem néhány napra", en: "Water and food for a few days", uk: "Вода та їжа на кілька днів", de: "Wasser und Essen für einige Tage" },
+        { id: "b4", hu: "Telefon, töltő, rádió, lámpa", en: "Phone, charger, radio, torch", uk: "Телефон, зарядний пристрій, радіо, ліхтарик", de: "Telefon, Ladegerät, Radio, Lampe" },
+        { id: "b5", hu: "Váltóruha, takaró, elsősegélycsomag", en: "Change of clothes, blanket, first-aid kit", uk: "Змінний одяг, ковдра, аптечка", de: "Wechselkleidung, Decke, Erste-Hilfe-Set" }
+      ] }
+  ]
+};
+
+/* ---------- Lane 2: LOCAL (publisher: data steward of the region; samples for now) ---------- */
+var LOCAL = {
+  "HU-BU": { name: "Budapest", issuer: null,
+    records: [{ type: "shelter", n: 1 }, { type: "shelter", n: 2 }, { type: "water", n: 3 }, { type: "medical", n: 4 }, { type: "assembly", n: 5 }] },
+  "HU-HB": { name: "Hajdú-Bihar", issuer: null,
+    records: [{ type: "shelter", n: 1 }, { type: "water", n: 2 }, { type: "water", n: 3 }, { type: "medical", n: 4 }, { type: "assembly", n: 5 }] },
+  "HU-GS": { name: "Győr-Moson-Sopron", issuer: null,
+    records: [{ type: "shelter", n: 1 }, { type: "water", n: 2 }, { type: "medical", n: 3 }, { type: "assembly", n: 4 }] }
+};
+
+/* ---------- Lane 3: ALERTS (template bank ships with the advice pack) ---------- */
+var TEMPLATES = {
+  T01: { hu: "Forrald fel a csapvizet, mielőtt megiszod vagy főzöl vele.",
+         en: "Boil tap water before drinking it or cooking with it.",
+         uk: "Кип'ятіть водопровідну воду перед питтям і приготуванням їжі.",
+         de: "Kochen Sie Leitungswasser ab, bevor Sie es trinken oder damit kochen." }
+};
+
+/* ---------- Trust registry: who may publish what, and where ---------- */
+var ISSUERS = {
+  osz: { name: { hu: "Országos szerkesztőség", en: "National editorial office", uk: "Національна редакція", de: "Nationale Redaktion" },
+         types: ["advice"], regions: ["HU"] },
+  ugy: { name: { hu: "Országos ügyelet", en: "National duty office", uk: "Національна чергова служба", de: "Nationale Leitstelle" },
+         types: ["alert"], regions: ["HU"] },
+  aghb: { name: { hu: "Hajdú-Bihar adatgazda", en: "Hajdú-Bihar data steward", uk: "Розпорядник даних Гайду-Бігар", de: "Datenstelle Hajdú-Bihar" },
+          types: ["local"], regions: ["HU-HB"] }
+};
+
+function checkScope(issuerId, type, region) {
+  var iss = ISSUERS[issuerId];
+  if (!iss) return "r_unknown";
+  var typeOk = iss.types.indexOf(type) !== -1;
+  var regionOk = iss.regions.some(function (r) { return region === r || region.indexOf(r + "-") === 0; });
+  return typeOk && regionOk ? null : "r_scope";
+}
+
+/* ---------- Storage (one viewer, one browser; may be missing) ---------- */
+var store = {
+  get: function (k, d) { try { var v = localStorage.getItem("fk-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set: function (k, v) { try { localStorage.setItem("fk-" + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+var browserLang = (navigator.language || "hu").slice(0, 2).toLowerCase();
+var state = {
+  lang: store.get("lang", LANGS[browserLang] ? browserLang : "hu"),
+  region: store.get("region", "HU-BU"),
+  checks: store.get("checks", {}),
+  plan: store.get("plan", {}),
+  persons: store.get("persons", 2),
+  days: store.get("days", 3),
+  msgs: store.get("msgs", []),
+  card: null,
+  copyText: null
+};
+if (!LANGS[state.lang]) state.lang = "hu";
+if (!LOCAL[state.region]) state.region = "HU-BU";
+
+function t(key, vars) {
+  var e = UI[key]; var s = e ? (e[state.lang] || e.hu) : key;
+  if (vars) Object.keys(vars).forEach(function (k) { s = s.replace("{" + k + "}", vars[k]); });
+  return s;
+}
+function L(obj) { return obj[state.lang] || obj.hu; }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+var ICONS = {
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  drop: '<path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/>',
+  siren: '<path d="M6 18v-5a6 6 0 0 1 12 0v5M4 21h16M12 2v2M4.5 5.5 6 7M19.5 5.5 18 7"/>',
+  exit: '<path d="M10 4H5v16h5M14 8l4 4-4 4M9 12h9"/>',
+  cross: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
+  chev: '<path d="m9 6 6 6-6 6"/>',
+  most: '<path d="M12 3 2 20h20zM12 10v4M12 17v.5"/>',
+  felkeszules: '<path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+  helyben: '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.500 7 12 7 12z"/><circle cx="12" cy="9" r="2.500"/>',
+  tervem: '<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',
+  frissitesek: '<path d="M20 12a8 8 0 0 1-14 5M4 12a8 8 0 0 1 14-5M18 3v4h-4M6 21v-4h4"/>'
+};
+function icon(name, cls) {
+  return '<svg class="' + (cls || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + "</svg>";
+}
+
+var SCREENS = ["most", "felkeszules", "helyben", "tervem", "frissitesek"];
+function current() { var h = location.hash.replace("#", ""); return SCREENS.indexOf(h) !== -1 ? h : "most"; }
+
+function fmtDate(ms) {
+  try { return new Intl.DateTimeFormat(state.lang, { dateStyle: "medium", timeStyle: "short" }).format(new Date(ms)); }
+  catch (e) { return new Date(ms).toISOString().slice(0, 16).replace("T", " "); }
+}
+function activeAlerts() {
+  var now = Date.now();
+  return state.msgs.filter(function (m) {
+    return m.ok && m.until > now && (state.region === m.region || state.region.indexOf(m.region + "-") === 0);
+  });
+}
+
+/* ---------- Screens ---------- */
+function viewMost() {
+  if (state.card) {
+    var c = ADVICE.cards.filter(function (x) { return x.id === state.card; })[0];
+    return '<button class="btn ghost" data-act="back">‹ ' + t("back") + "</button>" +
+      "<h2>" + esc(L(c.title)) + "</h2>" +
+      '<ol class="steps">' + L(c.steps).map(function (s) { return "<li><span>" + esc(s) + "</span></li>"; }).join("") + "</ol>" +
+      '<a class="btn call" href="tel:112">' + t("call112") + "</a>" +
+      '<p class="muted">' + t("source") + ": " + t("advicePack") + " " + ADVICE.version + "</p>";
+  }
+  var alerts = activeAlerts();
+  var top = alerts.length
+    ? alerts.map(function (m) {
+        return '<div class="banner" role="alert"><strong>' + t("alert") + " · " + esc(LOCAL[m.region] ? LOCAL[m.region].name : m.region) + '</strong><span class="msg">' + esc(L(TEMPLATES[m.tpl])) + '</span><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS[m.issuer].name)) + " · " + t("validUntil") + ": " + esc(fmtDate(m.until)) + "</span></div>";
+      }).join("")
+    : '<p class="calm">' + t("noAlerts") + "</p>";
+  return top + "<h2>" + t("whatHappened") + '</h2><div class="stack">' +
+    ADVICE.cards.map(function (c) {
+      return '<button class="big" data-act="card" data-id="' + c.id + '">' + icon(c.icon) + "<span>" + esc(L(c.title)) + "</span>" + icon("chev", "chev") + "</button>";
+    }).join("") + "</div>" +
+    '<a class="btn call" href="tel:112">' + t("call112") + "</a>";
+}
+
+function viewFelkeszules() {
+  var litres = state.persons * state.days * 3;
+  var html = '<section class="card"><h3>' + t("calcTitle") + "</h3>" +
+    '<div class="row between"><span>' + t("persons") + '</span><div class="stepper"><button data-act="persons" data-d="-1" aria-label="' + t("fewer") + '">−</button><output>' + state.persons + '</output><button data-act="persons" data-d="1" aria-label="' + t("more") + '">+</button></div></div>' +
+    '<div class="row between"><span>' + t("days") + '</span><div class="seg">' + [3, 7].map(function (d) { return '<button data-act="days" data-d="' + d + '" aria-pressed="' + (state.days === d) + '">' + d + "</button>"; }).join("") + "</div></div>" +
+    '<p class="result">' + t("calcResult", { l: litres }) + '</p><p class="muted">' + t("calcNote") + "</p></section>";
+  ADVICE.lists.forEach(function (list) {
+    var done = list.items.filter(function (i) { return state.checks[i.id]; }).length;
+    html += '<section class="card"><div class="row between"><h3>' + esc(L(list.title)) + '</h3><span class="muted">' + t("done", { a: done, b: list.items.length }) + "</span></div><div>" +
+      list.items.map(function (i) {
+        return '<label class="check"><input type="checkbox" id="chk-' + i.id + '" data-act="check" data-id="' + i.id + '"' + (state.checks[i.id] ? " checked" : "") + "><span>" + esc(L(i)) + "</span></label>";
+      }).join("") + "</div></section>";
+  });
+  html += '<a class="btn ghost" href="../">' + t("fullBook") + "</a>" +
+    '<p class="muted">' + t("source") + ": " + t("advicePack") + " " + ADVICE.version + "</p>";
+  return html;
+}
+
+function viewHelyben() {
+  var reg = LOCAL[state.region];
+  return '<section class="card"><label class="f" for="region">' + t("region") + '<select id="region">' +
+    Object.keys(LOCAL).map(function (k) { return '<option value="' + k + '"' + (k === state.region ? " selected" : "") + ">" + esc(LOCAL[k].name) + "</option>"; }).join("") +
+    '</select></label><p class="muted">' + t("regionNote") + "</p></section>" +
+    '<section class="card"><h3>' + t("emergencyNumbers") + "</h3><div>" +
+    ["112", "104", "105", "107"].map(function (n) { return '<a class="num" href="tel:' + n + '"><b>' + n + "</b><span>" + t("n" + n) + "</span></a>"; }).join("") +
+    "</div></section>" +
+    '<section class="card"><div class="row between"><h3>' + t("localData") + " · " + esc(reg.name) + '</h3><span class="tag">' + t("sample") + "</span></div>" +
+    '<p class="note">' + t("localNote") + "</p><div>" +
+    reg.records.map(function (r) {
+      return '<div class="rec"><div><strong>' + t("type_" + r.type) + '</strong><br><span class="muted">' + t("samplePlace", { n: r.n }) + '</span></div><span class="tag">' + t("sample") + "</span></div>";
+    }).join("") + "</div></section>";
+}
+
+var PLAN_FIELDS = [["meet1", "text"], ["meet2", "text"], ["cname", "text"], ["cphone", "tel"], ["kids", "text"], ["meds", "area"], ["shut", "area"]];
+function planText() {
+  return t("planTitle") + "\n" + PLAN_FIELDS.map(function (f) { return t("f_" + f[0]) + ": " + (state.plan[f[0]] || "–"); }).join("\n");
+}
+function viewTervem() {
+  var html = "<h2>" + t("planTitle") + '</h2><p class="muted">' + t("planNote") + '</p><div class="stack">' +
+    PLAN_FIELDS.map(function (f) {
+      var id = "plan-" + f[0], v = esc(state.plan[f[0]] || "");
+      var ctl = f[1] === "area"
+        ? '<textarea id="' + id + '" data-plan="' + f[0] + '">' + v + "</textarea>"
+        : '<input id="' + id + '" type="' + f[1] + '" data-plan="' + f[0] + '" value="' + v + '" autocomplete="off">';
+      return '<label class="f" for="' + id + '">' + t("f_" + f[0]) + ctl + "</label>";
+    }).join("") + "</div>" +
+    '<button class="btn" data-act="copy">' + t("copy") + "</button>" +
+    '<p class="muted" id="copy-status" role="status"></p>';
+  if (state.copyText !== null) html += '<textarea id="copy-out" readonly>' + esc(state.copyText) + "</textarea>";
+  return html;
+}
+
+function viewFrissitesek() {
+  var alertCount = state.msgs.filter(function (m) { return m.ok; }).length;
+  var html = '<section class="card"><h3>' + t("packs") + "</h3>" +
+    '<div class="lane advice"><strong>' + t("lane_advice") + '</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.osz.name)) + '</span><span class="muted">' + t("scopeNational") + " · " + t("version") + " " + ADVICE.version + "</span></div>" +
+    '<div class="lane local"><strong>' + t("lane_local") + " · " + esc(LOCAL[state.region].name) + ' <span class="tag">' + t("sample") + '</span></strong><span class="muted">' + t("publisher") + ": " + t("noSteward") + '</span><span class="muted">' + t("scopeRegion") + "</span></div>" +
+    '<div class="lane alert"><strong>' + t("lane_alert") + " (" + alertCount + ')</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.ugy.name)) + '</span><span class="muted">' + t("scopeNational") + "</span></div></section>" +
+    '<section class="card"><h3>' + t("tryTitle") + '</h3><p class="muted">' + t("tryNote") + "</p>" +
+    '<button class="btn plain" data-act="demo" data-n="1">' + t("demo1") + "</button>" +
+    '<button class="btn plain" data-act="demo" data-n="2">' + t("demo2") + "</button>" +
+    '<button class="btn plain" data-act="demo" data-n="3">' + t("demo3") + "</button>" +
+    '<p class="note">' + t("protoNote") + "</p></section>";
+  if (state.msgs.length) {
+    html += '<section class="card">' + state.msgs.slice().reverse().map(function (m) {
+      var who = ISSUERS[m.issuer] ? L(ISSUERS[m.issuer].name) : m.issuer;
+      return '<div class="stack"><div class="row between"><strong>' + esc(who) + '</strong><span class="tag ' + (m.ok ? "ok" : "no") + '">' + t(m.ok ? "accepted" : "rejected") + "</span></div>" +
+        "<code>" + esc(m.raw) + '</code><span class="muted">' + t("bytes", { n: m.bytes }) + " · " + t(m.ok ? "r_ok" : m.reason) + "</span></div>";
+    }).join('<hr style="width:100%;border:0;border-top:1px solid var(--line);margin:0">') +
+      '<button class="btn ghost" data-act="clear">' + t("clear") + "</button></section>";
+  }
+  return html;
+}
+
+var VIEWS = { most: viewMost, felkeszules: viewFelkeszules, helyben: viewHelyben, tervem: viewTervem, frissitesek: viewFrissitesek };
+
+function render(keepScroll) {
+  var scr = current(), main = document.getElementById("main"), y = main.scrollTop;
+  document.documentElement.lang = state.lang;
+  document.title = t("title");
+  document.getElementById("title").textContent = t("title");
+  document.getElementById("lang-label").textContent = t("language");
+  main.innerHTML = VIEWS[scr]();
+  main.scrollTop = keepScroll ? y : 0;
+  document.getElementById("nav").innerHTML = SCREENS.map(function (s) {
+    return '<a href="#' + s + '"' + (s === scr ? ' aria-current="page"' : "") + ">" + icon(s) + "<span>" + t("nav_" + s) + "</span></a>";
+  }).join("");
+}
+
+/* ---------- Compact message: version|template|region|expiry|issuer ---------- */
+function receive(issuer, region) {
+  var until = Date.now() + 48 * 3600 * 1000;
+  var raw = ["1", "T01", region, Math.floor(until / 60000).toString(36), issuer].join("|");
+  var reason = checkScope(issuer, "alert", region);
+  var bytes = raw.length;
+  try { bytes = new TextEncoder().encode(raw).length; } catch (e) {}
+  state.msgs = state.msgs.filter(function (m) { return !(m.tpl === "T01" && m.region === region && m.issuer === issuer); });
+  state.msgs.push({ raw: raw, bytes: bytes, tpl: "T01", region: region, until: until, issuer: issuer, ok: !reason, reason: reason });
+  if (state.msgs.length > 8) state.msgs = state.msgs.slice(-8);
+  store.set("msgs", state.msgs);
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", function (ev) {
+  var el = ev.target.closest("[data-act]"); if (!el || el.tagName === "INPUT") return;
+  var act = el.getAttribute("data-act");
+  if (act === "card") { state.card = el.getAttribute("data-id"); render(); }
+  else if (act === "back") { state.card = null; render(); }
+  else if (act === "persons") { state.persons = Math.min(12, Math.max(1, state.persons + Number(el.getAttribute("data-d")))); store.set("persons", state.persons); render(true); }
+  else if (act === "days") { state.days = Number(el.getAttribute("data-d")); store.set("days", state.days); render(true); }
+  else if (act === "demo") {
+    var n = el.getAttribute("data-n");
+    if (n === "1") receive("ugy", state.region);
+    else if (n === "2") receive("aghb", state.region === "HU-BU" ? "HU-GS" : "HU-BU");
+    else receive("x9k2", state.region);
+    render(true);
+  }
+  else if (act === "clear") { state.msgs = []; store.set("msgs", []); render(true); }
+  else if (act === "copy") {
+    var text = planText();
+    var status = document.getElementById("copy-status");
+    var fail = function () { state.copyText = text; render(true); document.getElementById("copy-status").textContent = t("copyFail"); };
+    try {
+      navigator.clipboard.writeText(text).then(function () { status.textContent = t("copied"); }, fail);
+    } catch (e) { fail(); }
+  }
+});
+document.addEventListener("change", function (ev) {
+  var el = ev.target;
+  if (el.id === "lang") { state.lang = el.value; store.set("lang", state.lang); render(true); }
+  else if (el.id === "region") { state.region = el.value; store.set("region", state.region); render(true); }
+  else if (el.getAttribute("data-act") === "check") {
+    var id = el.getAttribute("data-id");
+    if (el.checked) state.checks[id] = 1; else delete state.checks[id];
+    store.set("checks", state.checks); render(true);
+  }
+});
+document.addEventListener("input", function (ev) {
+  var k = ev.target.getAttribute && ev.target.getAttribute("data-plan");
+  if (k) { state.plan[k] = ev.target.value; store.set("plan", state.plan); }
+});
+window.addEventListener("hashchange", function () { state.card = null; state.copyText = null; render(); });
+
+var langSel = document.getElementById("lang");
+langSel.innerHTML = Object.keys(LANGS).map(function (k) { return '<option value="' + k + '">' + LANGS[k] + "</option>"; }).join("");
+langSel.value = state.lang;
+render();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(function () {}); }
+</script>
+</body>
+</html>
