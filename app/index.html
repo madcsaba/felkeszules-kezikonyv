@@ -68,6 +68,15 @@ p{margin:0}
 .banner{background:var(--danger-bg);border:2px solid var(--danger);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px}
 .banner strong{color:var(--danger);font-size:16px;text-transform:uppercase;letter-spacing:.04em}
 .banner .msg{font-size:22px;font-weight:650;line-height:1.3}
+.banner.warn{background:var(--warn-bg);border-color:var(--warn)}
+.banner.warn strong{color:var(--warn)}
+.place{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-top:1px solid var(--line)}
+.place:first-of-type{border-top:0;padding-top:0}
+.place .row{gap:8px}
+.place .btn{min-height:48px;padding:8px 14px;font-size:16px}
+.err{color:var(--danger);font-size:15px;font-weight:600}
+.seg.wrap{flex-wrap:wrap}
+.seg.wrap button{font-size:17px;min-height:48px}
 .calm{background:var(--ok-bg);color:var(--ok);border-radius:14px;padding:12px 16px;font-weight:600;font-size:16px}
 ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:s}
 ol.steps li{counter-increment:s;display:flex;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;font-size:20px;line-height:1.35}
@@ -206,6 +215,67 @@ var UI = {
   r_ok: { hu: "Megjelenik a Most képernyőn.", en: "Shown on the Now screen.", uk: "Показано на екрані «Зараз».", de: "Wird unter „Jetzt“ angezeigt." },
   bytes: { hu: "{n} bájt", en: "{n} bytes", uk: "{n} байт", de: "{n} Byte" },
   protoNote: { hu: "Prototípus: a hatókör-ellenőrzés működik, a digitális aláírás ellenőrzése még nincs bekötve.", en: "Prototype: scope checks work; digital signature verification is not wired in yet.", uk: "Прототип: перевірка сфери дії працює, перевірку цифрового підпису ще не підключено.", de: "Prototyp: Die Bereichsprüfung funktioniert, die Prüfung der digitalen Signatur ist noch nicht angebunden." },
+  places: { hu: "Helyeim", en: "My places", uk: "Мої місця", de: "Meine Orte" },
+  current: { hu: "MOST ITT", en: "HERE NOW", uk: "ЗАРАЗ ТУТ", de: "JETZT HIER" },
+  hereNow: { hu: "Itt vagyok most", en: "I am here now", uk: "Я зараз тут", de: "Ich bin jetzt hier" },
+  addPlace: { hu: "Új hely hozzáadása", en: "Add a place", uk: "Додати місце", de: "Ort hinzufügen" },
+  edit: { hu: "Szerkesztés", en: "Edit", uk: "Редагувати", de: "Bearbeiten" },
+  del: { hu: "Törlés", en: "Delete", uk: "Видалити", de: "Löschen" },
+  save: { hu: "Mentés", en: "Save", uk: "Зберегти", de: "Speichern" },
+  cancel: { hu: "Mégse", en: "Cancel", uk: "Скасувати", de: "Abbrechen" },
+  placeName: { hu: "Megnevezés (pl. Otthon, Nyaraló)", en: "Name (e.g. Home, Holiday house)", uk: "Назва (напр. Дім, Дача)", de: "Bezeichnung (z. B. Zuhause, Ferienhaus)" },
+  town: { hu: "Település", en: "Town", uk: "Населений пункт", de: "Ort" },
+  svc_power: { hu: "Áram", en: "Electricity", uk: "Електроенергія", de: "Strom" },
+  svc_water: { hu: "Víz", en: "Water", uk: "Вода", de: "Wasser" },
+  prov_power: { hu: "Áramhálózat üzemeltetője", en: "Electricity network operator", uk: "Оператор електромережі", de: "Stromnetzbetreiber" },
+  prov_water: { hu: "Vízszolgáltató", en: "Water utility", uk: "Водоканал", de: "Wasserversorger" },
+  suggested: { hu: "javasolt", en: "suggested", uk: "рекомендовано", de: "vorgeschlagen" },
+  billHint: { hu: "Ellenőrizd a számládon: az áramszámla 3. oldalán szerepel a hálózat üzemeltetője.", en: "Check your bill: the network operator is shown on page 3 of the electricity bill.", uk: "Перевірте рахунок: оператор мережі вказаний на 3-й сторінці рахунку за електроенергію.", de: "Prüfen Sie Ihre Rechnung: Der Netzbetreiber steht auf Seite 3 der Stromrechnung." },
+  placesNote: { hu: "A helyek csak ezen a telefonon tárolódnak. A pontos címedet nem kérjük el.", en: "Places are stored only on this phone. We do not ask for your exact address.", uk: "Місця зберігаються лише на цьому телефоні. Точну адресу ми не запитуємо.", de: "Orte werden nur auf diesem Telefon gespeichert. Ihre genaue Adresse wird nicht abgefragt." },
+  defaultPlace: { hu: "Otthon", en: "Home", uk: "Дім", de: "Zuhause" },
+  needName: { hu: "Adj nevet a helynek.", en: "Give the place a name.", uk: "Дайте місцю назву.", de: "Geben Sie dem Ort einen Namen." },
+  keepOne: { hu: "Legalább egy hely kell.", en: "At least one place is needed.", uk: "Потрібне принаймні одне місце.", de: "Mindestens ein Ort ist nötig." },
+  none: { hu: "Nincs megadva", en: "Not set", uk: "Не вказано", de: "Nicht angegeben" },
+  statusFor: { hu: "Mi a helyzet itt: {p}", en: "Status at: {p}", uk: "Стан у: {p}", de: "Lage in: {p}" },
+  noOutage_power: { hu: "Nincs bejelentett áramszünet ennél a helynél.", en: "No reported power cut for this place.", uk: "Для цього місця відключень світла не повідомлено.", de: "Für diesen Ort ist kein Stromausfall gemeldet." },
+  noOutage_water: { hu: "Nincs bejelentett vízhiány ennél a helynél.", en: "No reported water outage for this place.", uk: "Для цього місця перебоїв з водою не повідомлено.", de: "Für diesen Ort ist keine Wasserunterbrechung gemeldet." },
+  firstCheck_power: { hu: "Először nézd meg a biztosítékot, és hogy a szomszédoknál van-e áram.", en: "First check your fuses and whether the neighbours have power.", uk: "Спершу перевірте запобіжники і чи є світло в сусідів.", de: "Prüfen Sie zuerst die Sicherungen und ob die Nachbarn Strom haben." },
+  firstCheck_water: { hu: "Először nézd meg a főelzárót, és hogy a szomszédoknál van-e víz.", en: "First check your main water valve and whether the neighbours have water.", uk: "Спершу перевірте головний кран і чи є вода в сусідів.", de: "Prüfen Sie zuerst den Hauptwasserhahn und ob die Nachbarn Wasser haben." },
+  checkProvider: { hu: "Kimaradások a szolgáltatónál", en: "Outages on the provider's site", uk: "Відключення на сайті постачальника", de: "Störungen beim Versorger" },
+  providerSite: { hu: "A szolgáltató weboldala", en: "Provider's website", uk: "Сайт постачальника", de: "Website des Versorgers" },
+  callFault: { hu: "Hibabejelentés: {n}", en: "Report a fault: {n}", uk: "Повідомити про аварію: {n}", de: "Störung melden: {n}" },
+  noLink: { hu: "Ehhez a szolgáltatóhoz még nincs ellenőrzött elérhetőség a rendszerben. Nézd meg a számládon.", en: "There is no verified contact for this provider in the system yet. Check your bill.", uk: "Для цього постачальника в системі ще немає перевірених контактів. Перегляньте рахунок.", de: "Für diesen Versorger sind noch keine geprüften Kontaktdaten hinterlegt. Sehen Sie auf Ihrer Rechnung nach." },
+  offlineNote: { hu: "Internet nélkül a weboldal nem nyílik meg, a telefonszám igen.", en: "Without internet the website will not open, but the phone number will work.", uk: "Без інтернету сайт не відкриється, але номер телефону працюватиме.", de: "Ohne Internet öffnet sich die Website nicht, die Telefonnummer funktioniert aber." },
+  noProvider: { hu: "Nincs megadva szolgáltató. Állítsd be a Helyben fülön.", en: "No provider set. Set it on the Local tab.", uk: "Постачальника не вказано. Налаштуйте на вкладці «Поруч».", de: "Kein Versorger angegeben. Unter „Vor Ort“ einstellen." },
+  kind_fault: { hu: "Üzemzavar", en: "Fault", uk: "Аварія", de: "Störung" },
+  kind_planned: { hu: "Tervezett munka", en: "Planned work", uk: "Планові роботи", de: "Geplante Arbeiten" },
+  cause: { hu: "Ok", en: "Cause", uk: "Причина", de: "Ursache" },
+  cause_c1: { hu: "hálózati hiba", en: "network fault", uk: "пошкодження мережі", de: "Netzfehler" },
+  cause_c2: { hu: "karbantartás", en: "maintenance", uk: "технічне обслуговування", de: "Wartung" },
+  cause_c3: { hu: "csőtörés", en: "burst pipe", uk: "прорив труби", de: "Rohrbruch" },
+  cause_c4: { hu: "vihar", en: "storm", uk: "негода", de: "Unwetter" },
+  restore: { hu: "Várható helyreállítás", en: "Expected restoration", uk: "Очікуване відновлення", de: "Voraussichtliche Behebung" },
+  notif: { hu: "Értesítések", en: "Notifications", uk: "Сповіщення", de: "Benachrichtigungen" },
+  notifPush: { hu: "Értesítés az appban (nem kell hozzá személyes adat)", en: "In-app notifications (no personal data needed)", uk: "Сповіщення в застосунку (особисті дані не потрібні)", de: "Benachrichtigungen in der App (keine persönlichen Daten nötig)" },
+  notifSms: { hu: "SMS, ha nincs mobilinternet", en: "SMS when there is no mobile data", uk: "SMS, якщо немає мобільного інтернету", de: "SMS, wenn kein mobiles Internet verfügbar ist" },
+  notifEmail: { hu: "E-mail", en: "Email", uk: "Електронна пошта", de: "E-Mail" },
+  phone: { hu: "Telefonszám", en: "Phone number", uk: "Номер телефону", de: "Telefonnummer" },
+  email: { hu: "E-mail-cím", en: "Email address", uk: "Адреса електронної пошти", de: "E-Mail-Adresse" },
+  notifNote: { hu: "SMS-hez és e-mailhez el kell küldeni az elérhetőségedet és a helyeid településeit, a címedet nem. Bármikor visszavonható.", en: "For SMS and email, your contact details and the towns of your places are sent, but not your address. You can withdraw at any time.", uk: "Для SMS та електронної пошти надсилаються ваші контакти й населені пункти ваших місць, але не адреса. Згоду можна відкликати будь-коли.", de: "Für SMS und E-Mail werden Ihre Kontaktdaten und die Orte Ihrer Standorte übermittelt, nicht Ihre Adresse. Jederzeit widerrufbar." },
+  protoContact: { hu: "Prototípus: ezek az adatok csak ezen a telefonon maradnak, nem küldjük el sehová.", en: "Prototype: this data stays on this phone and is not sent anywhere.", uk: "Прототип: ці дані залишаються на цьому телефоні й нікуди не надсилаються.", de: "Prototyp: Diese Daten bleiben auf diesem Telefon und werden nirgendwohin gesendet." },
+  badPhone: { hu: "Adj meg érvényes telefonszámot, pl. +36 30 123 4567.", en: "Enter a valid phone number, e.g. +36 30 123 4567.", uk: "Введіть дійсний номер, напр. +36 30 123 4567.", de: "Geben Sie eine gültige Nummer ein, z. B. +36 30 123 4567." },
+  badEmail: { hu: "Adj meg érvényes e-mail-címet.", en: "Enter a valid email address.", uk: "Введіть дійсну адресу електронної пошти.", de: "Geben Sie eine gültige E-Mail-Adresse ein." },
+  eonNotify: { hu: "Az E.ON már most is küld SMS-t és e-mailt az ingatlanodat érintő áramszünetről. Beállítás az online ügyfélszolgálaton.", en: "E.ON already sends SMS and email about power cuts affecting your property. Set it up in its online customer service.", uk: "E.ON уже надсилає SMS та листи про відключення, що стосуються вашої нерухомості. Налаштування — в онлайн-обслуговуванні.", de: "E.ON verschickt schon heute SMS und E-Mails zu Stromausfällen an Ihrer Immobilie. Einrichtung im Online-Kundenservice." },
+  eonNotifyBtn: { hu: "E.ON online ügyfélszolgálat", en: "E.ON online customer service", uk: "Онлайн-обслуговування E.ON", de: "E.ON Online-Kundenservice" },
+  demoUtility: { hu: "{p}: üzemzavar itt: {t}", en: "{p}: fault in {t}", uk: "{p}: аварія в {t}", de: "{p}: Störung in {t}" },
+  demoWater: { hu: "{p}: tervezett vízhiány itt: {t}", en: "{p}: planned water outage in {t}", uk: "{p}: планове відключення води в {t}", de: "{p}: geplante Wasserunterbrechung in {t}" },
+  demoWrong: { hu: "Opus Titász üzen Budapestnek (nem az ő területe)", en: "Opus Titász sends to Budapest (not its area)", uk: "Opus Titász надсилає для Будапешта (не його територія)", de: "Opus Titász sendet an Budapest (nicht sein Gebiet)" },
+  lane_utility: { hu: "Szolgáltatói értesítések", en: "Provider notices", uk: "Повідомлення постачальників", de: "Versorgerhinweise" },
+  scopeProvider: { hu: "Hatókör: csak a saját ellátási területe és szolgáltatása", en: "Scope: own service area and service only", uk: "Сфера дії: лише власна територія та послуга", de: "Geltungsbereich: nur eigenes Versorgungsgebiet und eigene Leistung" },
+  providersN: { hu: "{n} szolgáltató, aláírt üzenetekkel", en: "{n} providers, signed messages", uk: "{n} постачальників, підписані повідомлення", de: "{n} Versorger, signierte Nachrichten" },
+  r_utility_ok: { hu: "Megjelenik az érintett helyeidnél és a Most képernyőn.", en: "Shown for your affected places and on the Now screen.", uk: "Показано для ваших місць і на екрані «Зараз».", de: "Wird bei den betroffenen Orten und unter „Jetzt“ angezeigt." },
+  r_service: { hu: "Ez a szolgáltató nem küldhet ilyen szolgáltatásról üzenetet.", en: "This provider may not send messages about this service.", uk: "Цей постачальник не має права надсилати повідомлення про цю послугу.", de: "Dieser Versorger darf keine Nachrichten zu dieser Leistung senden." },
+  unverified: { hu: "ellenőrizendő", en: "to be verified", uk: "потребує перевірки", de: "zu prüfen" },
   clear: { hu: "Üzenetek törlése", en: "Clear messages", uk: "Очистити повідомлення", de: "Nachrichten löschen" }
 };
 
@@ -366,13 +436,51 @@ var ADVICE = {
 };
 
 /* ---------- Lane 2: LOCAL (publisher: data steward of the region; samples for now) ---------- */
-var LOCAL = {
-  "HU-BU": { name: "Budapest", issuer: null,
-    records: [{ type: "shelter", n: 1 }, { type: "shelter", n: 2 }, { type: "water", n: 3 }, { type: "medical", n: 4 }, { type: "assembly", n: 5 }] },
-  "HU-HB": { name: "Hajdú-Bihar", issuer: null,
-    records: [{ type: "shelter", n: 1 }, { type: "water", n: 2 }, { type: "water", n: 3 }, { type: "medical", n: 4 }, { type: "assembly", n: 5 }] },
-  "HU-GS": { name: "Győr-Moson-Sopron", issuer: null,
-    records: [{ type: "shelter", n: 1 }, { type: "water", n: 2 }, { type: "medical", n: 3 }, { type: "assembly", n: 4 }] }
+var COUNTIES = {
+  "HU-BU": "Budapest", "HU-PE": "Pest", "HU-HB": "Hajdú-Bihar", "HU-CS": "Csongrád-Csanád",
+  "HU-GS": "Győr-Moson-Sopron", "HU-BA": "Baranya", "HU-BZ": "Borsod-Abaúj-Zemplén",
+  "HU-SO": "Somogy", "HU-HE": "Heves"
+};
+function localRecords() {
+  return [{ type: "shelter", n: 1 }, { type: "water", n: 2 }, { type: "medical", n: 3 }, { type: "assembly", n: 4 }];
+}
+
+/* Towns: the settlement is the shared key between places, providers and messages.
+   In production: KSH settlement code + optional street list from the central address register. */
+var TOWNS = {
+  budapest: { name: "Budapest", region: "HU-BU", power: "eon_bp", water: "fv" },
+  debrecen: { name: "Debrecen", region: "HU-HB", power: "titasz", water: "w_debrecen" },
+  szeged:   { name: "Szeged", region: "HU-CS", power: "demasz", water: "w_szeged" },
+  gyor:     { name: "Győr", region: "HU-GS", power: "eon_ed", water: "w_gyor" },
+  pecs:     { name: "Pécs", region: "HU-BA", power: "eon_dd", water: "tettye" },
+  miskolc:  { name: "Miskolc", region: "HU-BZ", power: "emasz", water: "w_miskolc" },
+  siofok:   { name: "Siófok", region: "HU-SO", power: "eon_dd", water: "w_drv" },
+  eger:     { name: "Eger", region: "HU-HE", power: "emasz", water: "w_heves" }
+};
+
+/* ---------- Lane 4: PROVIDERS (publisher: each utility, own area + own service only) ----------
+   web/outage/phone are filled only where verified; the rest is left for the provider to supply. */
+var PROVIDERS = {
+  eon_bp: { service: "power", name: "E.ON – Elmű Hálózati (Budapest, Pest)", regions: ["HU-BU", "HU-PE"],
+            web: "https://www.eon.hu/", outage: "https://www.eon.hu/pestmegyeihalozat/tudnivalok/energiakozeli-informaciok/tervezett-aramszunetek.html", notify: "https://www.eon.hu/ugyintezes" },
+  eon_ed: { service: "power", name: "E.ON Észak-dunántúli Áramhálózati", regions: ["HU-GS", "HU-KE", "HU-VE", "HU-FE", "HU-VA", "HU-ZA"],
+            web: "https://www.eon.hu/", notify: "https://www.eon.hu/ugyintezes" },
+  eon_dd: { service: "power", name: "E.ON Dél-dunántúli Áramhálózati", regions: ["HU-BA", "HU-SO", "HU-TO", "HU-ZA"],
+            web: "https://www.eon.hu/", notify: "https://www.eon.hu/ugyintezes" },
+  emasz:  { service: "power", name: "MVM Émász Áramhálózati", regions: ["HU-NO", "HU-HE", "HU-BZ", "HU-PE"],
+            web: "https://www.mvmemasz.hu", phone: "06 80 42 43 44" },
+  demasz: { service: "power", name: "MVM Démász Áramhálózati", regions: ["HU-BK", "HU-CS", "HU-BE", "HU-PE"],
+            phone: "06 62 565 881" },
+  titasz: { service: "power", name: "Opus Titász Áramhálózati", regions: ["HU-HB", "HU-SZ", "HU-JN"] },
+  fv:     { service: "water", name: "Fővárosi Vízművek", regions: ["HU-BU", "HU-PE"],
+            web: "https://www.vizmuvek.hu", outage: "https://vizmuvek.hu/en/home/utility-customer-service/service-coverage/failure-notice" },
+  tettye: { service: "water", name: "Tettye Forrásház (Pécs)", regions: ["HU-BA"], web: "https://tettyeforrashaz.hu" },
+  w_debrecen: { service: "water", name: "Debreceni Vízmű", regions: ["HU-HB"] },
+  w_szeged:   { service: "water", name: "Szegedi Vízmű", regions: ["HU-CS"] },
+  w_gyor:     { service: "water", name: "Pannon-Víz", regions: ["HU-GS"] },
+  w_miskolc:  { service: "water", name: "MIVÍZ", regions: ["HU-BZ"] },
+  w_drv:      { service: "water", name: "DRV", regions: ["HU-SO"] },
+  w_heves:    { service: "water", name: "Heves Megyei Vízmű", regions: ["HU-HE"] }
 };
 
 /* ---------- Lane 3: ALERTS (template bank ships with the advice pack) ---------- */
@@ -392,6 +500,10 @@ var ISSUERS = {
   aghb: { name: { hu: "Hajdú-Bihar adatgazda", en: "Hajdú-Bihar data steward", uk: "Розпорядник даних Гайду-Бігар", de: "Datenstelle Hajdú-Bihar" },
           types: ["local"], regions: ["HU-HB"] }
 };
+Object.keys(PROVIDERS).forEach(function (id) {
+  var p = PROVIDERS[id];
+  ISSUERS[id] = { name: { hu: p.name, en: p.name, uk: p.name, de: p.name }, types: ["utility"], service: p.service, regions: p.regions };
+});
 
 function checkScope(issuerId, type, region) {
   var iss = ISSUERS[issuerId];
@@ -410,7 +522,11 @@ var store = {
 var browserLang = (navigator.language || "hu").slice(0, 2).toLowerCase();
 var state = {
   lang: store.get("lang", LANGS[browserLang] ? browserLang : "hu"),
-  region: store.get("region", "HU-BU"),
+  places: store.get("places", null),
+  here: store.get("here", "p1"),
+  contact: store.get("contact", { push: true, sms: false, email: false, phone: "", mail: "" }),
+  notices: store.get("notices", []),
+  editing: null, draft: null, draftErr: null,
   checks: store.get("checks", {}),
   plan: store.get("plan", {}),
   persons: store.get("persons", 2),
@@ -420,7 +536,16 @@ var state = {
   copyText: null
 };
 if (!LANGS[state.lang]) state.lang = "hu";
-if (!LOCAL[state.region]) state.region = "HU-BU";
+if (!state.places || !state.places.length) state.places = [{ id: "p1", name: null, town: "budapest", power: "eon_bp", water: "fv" }];
+if (!state.places.some(function (p) { return p.id === state.here; })) state.here = state.places[0].id;
+function herePlace() { return state.places.filter(function (p) { return p.id === state.here; })[0]; }
+function placeName(p) { return p.name || t("defaultPlace"); }
+function curRegion() { return TOWNS[herePlace().town].region; }
+function savePlaces() { store.set("places", state.places); store.set("here", state.here); }
+function placeNotices(p, service) {
+  var now = Date.now();
+  return state.notices.filter(function (n) { return n.ok && n.end > now && n.town === p.town && (!service || n.service === service); });
+}
 
 function t(key, vars) {
   var e = UI[key]; var s = e ? (e[state.lang] || e.hu) : key;
@@ -457,8 +582,45 @@ function fmtDate(ms) {
 function activeAlerts() {
   var now = Date.now();
   return state.msgs.filter(function (m) {
-    return m.ok && m.until > now && (state.region === m.region || state.region.indexOf(m.region + "-") === 0);
+    var r = curRegion();
+    return m.ok && m.until > now && (r === m.region || r.indexOf(m.region + "-") === 0);
   });
+}
+
+
+function fmtTime(ms) {
+  try { return new Intl.DateTimeFormat(state.lang, { weekday: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(ms)); }
+  catch (e) { return new Date(ms).toISOString().slice(11, 16); }
+}
+function noticeBanner(n, p) {
+  return '<div class="banner warn" role="status"><strong>' + esc(placeName(p)) + " · " + t("svc_" + n.service) + " · " + t("kind_" + n.kind) + "</strong>" +
+    '<span class="msg">' + t("cause") + ": " + t("cause_" + n.cause) + "</span>" +
+    "<span>" + t("restore") + ": <b>" + esc(fmtTime(n.end)) + "</b></span>" +
+    '<span class="muted">' + t("publisher") + ": " + esc(PROVIDERS[n.issuer].name) + "</span></div>";
+}
+function providerLinks(prov) {
+  var h = "";
+  if (prov.outage || prov.web) h += '<a class="btn" href="' + esc(prov.outage || prov.web) + '" target="_blank" rel="noopener">' + t(prov.outage ? "checkProvider" : "providerSite") + "</a>";
+  if (prov.phone) h += '<a class="btn ghost" href="tel:' + prov.phone.replace(/\s/g, "") + '">' + t("callFault", { n: esc(prov.phone) }) + "</a>";
+  if (!prov.web && !prov.phone) h += '<p class="note">' + t("noLink") + "</p>";
+  else if (prov.web) h += '<p class="muted">' + t("offlineNote") + "</p>";
+  return h;
+}
+function serviceStatus(service) {
+  var p = herePlace(), h = '<section class="card">';
+  if (state.places.length > 1) {
+    h += '<div class="seg wrap">' + state.places.map(function (q) {
+      return '<button data-act="here" data-id="' + q.id + '" aria-pressed="' + (q.id === p.id) + '">' + esc(placeName(q)) + "</button>";
+    }).join("") + "</div>";
+  }
+  h += "<h3>" + t("statusFor", { p: esc(placeName(p)) + " (" + esc(TOWNS[p.town].name) + ")" }) + "</h3>";
+  var ns = placeNotices(p, service);
+  h += ns.length ? ns.map(function (n) { return noticeBanner(n, p); }).join("")
+    : '<p class="calm">' + t("noOutage_" + service) + "</p><p>" + t("firstCheck_" + service) + "</p>";
+  var prov = PROVIDERS[p[service]];
+  if (prov) h += "<p><strong>" + esc(prov.name) + "</strong></p>" + providerLinks(prov);
+  else h += '<p class="note">' + t("noProvider") + "</p>";
+  return h + "</section>";
 }
 
 /* ---------- Screens ---------- */
@@ -467,6 +629,7 @@ function viewMost() {
     var c = ADVICE.cards.filter(function (x) { return x.id === state.card; })[0];
     return '<button class="btn ghost" data-act="back">‹ ' + t("back") + "</button>" +
       "<h2>" + esc(L(c.title)) + "</h2>" +
+      (c.id === "power" || c.id === "water" ? serviceStatus(c.id) : "") +
       '<ol class="steps">' + L(c.steps).map(function (s) { return "<li><span>" + esc(s) + "</span></li>"; }).join("") + "</ol>" +
       '<a class="btn call" href="tel:112">' + t("call112") + "</a>" +
       '<p class="muted">' + t("source") + ": " + t("advicePack") + " " + ADVICE.version + "</p>";
@@ -474,9 +637,12 @@ function viewMost() {
   var alerts = activeAlerts();
   var top = alerts.length
     ? alerts.map(function (m) {
-        return '<div class="banner" role="alert"><strong>' + t("alert") + " · " + esc(LOCAL[m.region] ? LOCAL[m.region].name : m.region) + '</strong><span class="msg">' + esc(L(TEMPLATES[m.tpl])) + '</span><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS[m.issuer].name)) + " · " + t("validUntil") + ": " + esc(fmtDate(m.until)) + "</span></div>";
+        return '<div class="banner" role="alert"><strong>' + t("alert") + " · " + esc(COUNTIES[m.region] || m.region) + '</strong><span class="msg">' + esc(L(TEMPLATES[m.tpl])) + '</span><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS[m.issuer].name)) + " · " + t("validUntil") + ": " + esc(fmtDate(m.until)) + "</span></div>";
       }).join("")
     : '<p class="calm">' + t("noAlerts") + "</p>";
+  state.places.forEach(function (p) {
+    placeNotices(p).forEach(function (n) { top += noticeBanner(n, p); });
+  });
   return top + "<h2>" + t("whatHappened") + '</h2><div class="stack">' +
     ADVICE.cards.map(function (c) {
       return '<button class="big" data-act="card" data-id="' + c.id + '">' + icon(c.icon) + "<span>" + esc(L(c.title)) + "</span>" + icon("chev", "chev") + "</button>";
@@ -502,19 +668,70 @@ function viewFelkeszules() {
   return html;
 }
 
+function providerOptions(service, town, selected) {
+  var sug = TOWNS[town][service];
+  var ids = Object.keys(PROVIDERS).filter(function (k) { return PROVIDERS[k].service === service; });
+  ids.sort(function (a, b) { return (b === sug) - (a === sug); });
+  return '<option value=""' + (!selected ? " selected" : "") + ">" + t("none") + "</option>" + ids.map(function (k) {
+    return '<option value="' + k + '"' + (k === selected ? " selected" : "") + ">" + esc(PROVIDERS[k].name) + (k === sug ? " (" + t("suggested") + ")" : "") + "</option>";
+  }).join("");
+}
+function placeEditor() {
+  var d = state.draft;
+  return '<section class="card"><h3>' + t(state.editing === "new" ? "addPlace" : "edit") + "</h3>" +
+    '<label class="f" for="draft-name">' + t("placeName") + '<input id="draft-name" data-draft="name" value="' + esc(d.name || "") + '" autocomplete="off"></label>' +
+    (state.draftErr ? '<p class="err" role="alert">' + t(state.draftErr) + "</p>" : "") +
+    '<label class="f" for="draft-town">' + t("town") + '<select id="draft-town">' +
+    Object.keys(TOWNS).map(function (k) { return '<option value="' + k + '"' + (k === d.town ? " selected" : "") + ">" + esc(TOWNS[k].name) + "</option>"; }).join("") +
+    "</select></label>" +
+    '<label class="f" for="draft-power">' + t("prov_power") + '<select id="draft-power">' + providerOptions("power", d.town, d.power) + "</select></label>" +
+    '<p class="muted">' + t("billHint") + "</p>" +
+    '<label class="f" for="draft-water">' + t("prov_water") + '<select id="draft-water">' + providerOptions("water", d.town, d.water) + "</select></label>" +
+    '<div class="row"><button class="btn" data-act="place-save">' + t("save") + '</button><button class="btn ghost" data-act="place-cancel">' + t("cancel") + "</button></div></section>";
+}
+function validPhone(v) { return /^\+?[0-9][0-9 ()\/-]{7,}$/.test(v.trim()); }
+function validMail(v) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim()); }
 function viewHelyben() {
-  var reg = LOCAL[state.region];
-  return '<section class="card"><label class="f" for="region">' + t("region") + '<select id="region">' +
-    Object.keys(LOCAL).map(function (k) { return '<option value="' + k + '"' + (k === state.region ? " selected" : "") + ">" + esc(LOCAL[k].name) + "</option>"; }).join("") +
-    '</select></label><p class="muted">' + t("regionNote") + "</p></section>" +
-    '<section class="card"><h3>' + t("emergencyNumbers") + "</h3><div>" +
+  var html = "";
+  if (state.editing) html += placeEditor();
+  html += '<section class="card"><div class="row between"><h3>' + t("places") + '</h3></div><div>' +
+    state.places.map(function (p) {
+      var here = p.id === state.here, pw = PROVIDERS[p.power], wa = PROVIDERS[p.water];
+      return '<div class="place"><div class="row between"><strong>' + esc(placeName(p)) + " · " + esc(TOWNS[p.town].name) + "</strong>" +
+        (here ? '<span class="tag ok">' + t("current") + "</span>" : "") + "</div>" +
+        '<span class="muted">' + t("svc_power") + ": " + esc(pw ? pw.name : t("none")) + "<br>" + t("svc_water") + ": " + esc(wa ? wa.name : t("none")) + "</span>" +
+        '<div class="row">' + (here ? "" : '<button class="btn" data-act="here" data-id="' + p.id + '">' + t("hereNow") + "</button>") +
+        '<button class="btn ghost" data-act="place-edit" data-id="' + p.id + '">' + t("edit") + "</button>" +
+        (state.places.length > 1 ? '<button class="btn ghost" data-act="place-del" data-id="' + p.id + '">' + t("del") + "</button>" : "") +
+        "</div></div>";
+    }).join("") + "</div>" +
+    (state.editing ? "" : '<button class="btn ghost" data-act="place-new">+ ' + t("addPlace") + "</button>") +
+    '<p class="muted">' + t("placesNote") + "</p></section>";
+
+  var c = state.contact;
+  var usesEon = state.places.some(function (p) { return p.power && p.power.indexOf("eon") === 0; });
+  html += '<section class="card"><h3>' + t("notif") + "</h3>" +
+    '<label class="check"><input type="checkbox" id="n-push" data-notif="push"' + (c.push ? " checked" : "") + "><span>" + t("notifPush") + "</span></label>" +
+    '<label class="check"><input type="checkbox" id="n-sms" data-notif="sms"' + (c.sms ? " checked" : "") + "><span>" + t("notifSms") + "</span></label>" +
+    (c.sms ? '<label class="f" for="c-phone">' + t("phone") + '<input id="c-phone" type="tel" data-contact="phone" value="' + esc(c.phone) + '" autocomplete="tel" placeholder="+36 30 123 4567"></label>' +
+      (c.phone && !validPhone(c.phone) ? '<p class="err">' + t("badPhone") + "</p>" : "") : "") +
+    '<label class="check"><input type="checkbox" id="n-email" data-notif="email"' + (c.email ? " checked" : "") + "><span>" + t("notifEmail") + "</span></label>" +
+    (c.email ? '<label class="f" for="c-mail">' + t("email") + '<input id="c-mail" type="email" data-contact="mail" value="' + esc(c.mail) + '" autocomplete="email"></label>' +
+      (c.mail && !validMail(c.mail) ? '<p class="err">' + t("badEmail") + "</p>" : "") : "") +
+    '<p class="muted">' + t("notifNote") + '</p><p class="note">' + t("protoContact") + "</p>" +
+    (usesEon ? "<p>" + t("eonNotify") + '</p><a class="btn ghost" href="https://www.eon.hu/ugyintezes" target="_blank" rel="noopener">' + t("eonNotifyBtn") + "</a>" : "") +
+    "</section>";
+
+  var region = curRegion();
+  html += '<section class="card"><h3>' + t("emergencyNumbers") + "</h3><div>" +
     ["112", "104", "105", "107"].map(function (n) { return '<a class="num" href="tel:' + n + '"><b>' + n + "</b><span>" + t("n" + n) + "</span></a>"; }).join("") +
     "</div></section>" +
-    '<section class="card"><div class="row between"><h3>' + t("localData") + " · " + esc(reg.name) + '</h3><span class="tag">' + t("sample") + "</span></div>" +
+    '<section class="card"><div class="row between"><h3>' + t("localData") + " · " + esc(COUNTIES[region]) + '</h3><span class="tag">' + t("sample") + "</span></div>" +
     '<p class="note">' + t("localNote") + "</p><div>" +
-    reg.records.map(function (r) {
+    localRecords().map(function (r) {
       return '<div class="rec"><div><strong>' + t("type_" + r.type) + '</strong><br><span class="muted">' + t("samplePlace", { n: r.n }) + '</span></div><span class="tag">' + t("sample") + "</span></div>";
     }).join("") + "</div></section>";
+  return html;
 }
 
 var PLAN_FIELDS = [["meet1", "text"], ["meet2", "text"], ["cname", "text"], ["cphone", "tel"], ["kids", "text"], ["meds", "area"], ["shut", "area"]];
@@ -540,18 +757,23 @@ function viewFrissitesek() {
   var alertCount = state.msgs.filter(function (m) { return m.ok; }).length;
   var html = '<section class="card"><h3>' + t("packs") + "</h3>" +
     '<div class="lane advice"><strong>' + t("lane_advice") + '</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.osz.name)) + '</span><span class="muted">' + t("scopeNational") + " · " + t("version") + " " + ADVICE.version + "</span></div>" +
-    '<div class="lane local"><strong>' + t("lane_local") + " · " + esc(LOCAL[state.region].name) + ' <span class="tag">' + t("sample") + '</span></strong><span class="muted">' + t("publisher") + ": " + t("noSteward") + '</span><span class="muted">' + t("scopeRegion") + "</span></div>" +
-    '<div class="lane alert"><strong>' + t("lane_alert") + " (" + alertCount + ')</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.ugy.name)) + '</span><span class="muted">' + t("scopeNational") + "</span></div></section>" +
+    '<div class="lane local"><strong>' + t("lane_local") + " · " + esc(COUNTIES[curRegion()]) + ' <span class="tag">' + t("sample") + '</span></strong><span class="muted">' + t("publisher") + ": " + t("noSteward") + '</span><span class="muted">' + t("scopeRegion") + "</span></div>" +
+    '<div class="lane alert"><strong>' + t("lane_alert") + " (" + alertCount + ')</strong><span class="muted">' + t("publisher") + ": " + esc(L(ISSUERS.ugy.name)) + '</span><span class="muted">' + t("scopeNational") + "</span></div>" +
+    '<div class="lane local"><strong>' + t("lane_utility") + " (" + state.notices.filter(function (n) { return n.ok; }).length + ')</strong><span class="muted">' + t("providersN", { n: Object.keys(PROVIDERS).length }) + '</span><span class="muted">' + t("scopeProvider") + "</span></div></section>" +
     '<section class="card"><h3>' + t("tryTitle") + '</h3><p class="muted">' + t("tryNote") + "</p>" +
     '<button class="btn plain" data-act="demo" data-n="1">' + t("demo1") + "</button>" +
     '<button class="btn plain" data-act="demo" data-n="2">' + t("demo2") + "</button>" +
     '<button class="btn plain" data-act="demo" data-n="3">' + t("demo3") + "</button>" +
+    (PROVIDERS[herePlace().power] ? '<button class="btn plain" data-act="demo" data-n="4">' + t("demoUtility", { p: esc(PROVIDERS[herePlace().power].name), t: esc(TOWNS[herePlace().town].name) }) + "</button>" : "") +
+    (PROVIDERS[herePlace().water] ? '<button class="btn plain" data-act="demo" data-n="5">' + t("demoWater", { p: esc(PROVIDERS[herePlace().water].name), t: esc(TOWNS[herePlace().town].name) }) + "</button>" : "") +
+    '<button class="btn plain" data-act="demo" data-n="6">' + t("demoWrong") + "</button>" +
     '<p class="note">' + t("protoNote") + "</p></section>";
-  if (state.msgs.length) {
-    html += '<section class="card">' + state.msgs.slice().reverse().map(function (m) {
+  var log = state.msgs.concat(state.notices).sort(function (a, b) { return a.at - b.at; });
+  if (log.length) {
+    html += '<section class="card">' + log.slice().reverse().map(function (m) {
       var who = ISSUERS[m.issuer] ? L(ISSUERS[m.issuer].name) : m.issuer;
       return '<div class="stack"><div class="row between"><strong>' + esc(who) + '</strong><span class="tag ' + (m.ok ? "ok" : "no") + '">' + t(m.ok ? "accepted" : "rejected") + "</span></div>" +
-        "<code>" + esc(m.raw) + '</code><span class="muted">' + t("bytes", { n: m.bytes }) + " · " + t(m.ok ? "r_ok" : m.reason) + "</span></div>";
+        "<code>" + esc(m.raw) + '</code><span class="muted">' + t("bytes", { n: m.bytes }) + " · " + t(m.ok ? (m.service ? "r_utility_ok" : "r_ok") : m.reason) + "</span></div>";
     }).join('<hr style="width:100%;border:0;border-top:1px solid var(--line);margin:0">') +
       '<button class="btn ghost" data-act="clear">' + t("clear") + "</button></section>";
   }
@@ -581,9 +803,25 @@ function receive(issuer, region) {
   var bytes = raw.length;
   try { bytes = new TextEncoder().encode(raw).length; } catch (e) {}
   state.msgs = state.msgs.filter(function (m) { return !(m.tpl === "T01" && m.region === region && m.issuer === issuer); });
-  state.msgs.push({ raw: raw, bytes: bytes, tpl: "T01", region: region, until: until, issuer: issuer, ok: !reason, reason: reason });
+  state.msgs.push({ at: Date.now(), raw: raw, bytes: bytes, tpl: "T01", region: region, until: until, issuer: issuer, ok: !reason, reason: reason });
   if (state.msgs.length > 8) state.msgs = state.msgs.slice(-8);
   store.set("msgs", state.msgs);
+}
+
+/* Compact provider notice: K1|service|kind|cause|town|start|end|issuer  (+ 64-byte signature in production) */
+function receiveUtility(issuer, service, kind, cause, town, hours) {
+  var start = Date.now(), end = start + hours * 3600 * 1000;
+  var raw = ["K1", service === "power" ? "E" : "V", kind === "fault" ? "Z" : "T", cause, town, Math.floor(start / 60000).toString(36), Math.floor(end / 60000).toString(36), issuer].join("|");
+  var iss = ISSUERS[issuer], reason = null;
+  if (!iss || iss.types.indexOf("utility") === -1) reason = "r_unknown";
+  else if (iss.service !== service) reason = "r_service";
+  else if (iss.regions.indexOf(TOWNS[town].region) === -1) reason = "r_scope";
+  var bytes = raw.length;
+  try { bytes = new TextEncoder().encode(raw).length; } catch (e) {}
+  state.notices = state.notices.filter(function (n) { return !(n.issuer === issuer && n.town === town && n.service === service); });
+  state.notices.push({ at: Date.now(), raw: raw, bytes: bytes, issuer: issuer, service: service, kind: kind, cause: cause, town: town, start: start, end: end, ok: !reason, reason: reason });
+  if (state.notices.length > 12) state.notices = state.notices.slice(-12);
+  store.set("notices", state.notices);
 }
 
 /* ---------- Events ---------- */
@@ -596,12 +834,39 @@ document.addEventListener("click", function (ev) {
   else if (act === "days") { state.days = Number(el.getAttribute("data-d")); store.set("days", state.days); render(true); }
   else if (act === "demo") {
     var n = el.getAttribute("data-n");
-    if (n === "1") receive("ugy", state.region);
-    else if (n === "2") receive("aghb", state.region === "HU-BU" ? "HU-GS" : "HU-BU");
-    else receive("x9k2", state.region);
+    var hp = herePlace();
+    if (n === "1") receive("ugy", curRegion());
+    else if (n === "2") receive("aghb", curRegion() === "HU-BU" ? "HU-GS" : "HU-BU");
+    else if (n === "3") receive("x9k2", curRegion());
+    else if (n === "4") receiveUtility(hp.power, "power", "fault", "c4", hp.town, 3);
+    else if (n === "5") receiveUtility(hp.water, "water", "planned", "c2", hp.town, 6);
+    else receiveUtility("titasz", "power", "fault", "c1", "budapest", 2);
     render(true);
   }
-  else if (act === "clear") { state.msgs = []; store.set("msgs", []); render(true); }
+  else if (act === "clear") { state.msgs = []; state.notices = []; store.set("msgs", []); store.set("notices", []); render(true); }
+  else if (act === "here") { state.here = el.getAttribute("data-id"); savePlaces(); render(true); }
+  else if (act === "place-new") { state.editing = "new"; state.draftErr = null; state.draft = { name: "", town: "budapest", power: TOWNS.budapest.power, water: TOWNS.budapest.water }; render(); }
+  else if (act === "place-edit") {
+    var pe = state.places.filter(function (p) { return p.id === el.getAttribute("data-id"); })[0];
+    state.editing = pe.id; state.draftErr = null; state.draft = { name: pe.name || "", town: pe.town, power: pe.power, water: pe.water }; render();
+  }
+  else if (act === "place-cancel") { state.editing = null; state.draft = null; state.draftErr = null; render(true); }
+  else if (act === "place-save") {
+    var d = state.draft;
+    var nameIsDefault = state.editing !== "new" && !d.name.trim() && state.places.filter(function (p) { return p.id === state.editing; })[0].name === null;
+    if (!d.name.trim() && !nameIsDefault) { state.draftErr = "needName"; render(true); var f = document.getElementById("draft-name"); if (f) f.focus(); return; }
+    var rec = { name: d.name.trim() || null, town: d.town, power: d.power || null, water: d.water || null };
+    if (state.editing === "new") { rec.id = "p" + Date.now().toString(36); state.places.push(rec); }
+    else { state.places = state.places.map(function (p) { return p.id === state.editing ? Object.assign({ id: p.id }, rec) : p; }); }
+    state.editing = null; state.draft = null; state.draftErr = null; savePlaces(); render();
+  }
+  else if (act === "place-del") {
+    if (state.places.length < 2) return;
+    var id = el.getAttribute("data-id");
+    state.places = state.places.filter(function (p) { return p.id !== id; });
+    if (state.here === id) state.here = state.places[0].id;
+    savePlaces(); render(true);
+  }
   else if (act === "copy") {
     var text = planText();
     var status = document.getElementById("copy-status");
@@ -614,7 +879,11 @@ document.addEventListener("click", function (ev) {
 document.addEventListener("change", function (ev) {
   var el = ev.target;
   if (el.id === "lang") { state.lang = el.value; store.set("lang", state.lang); render(true); }
-  else if (el.id === "region") { state.region = el.value; store.set("region", state.region); render(true); }
+  else if (el.id === "draft-town") { state.draft.town = el.value; state.draft.power = TOWNS[el.value].power; state.draft.water = TOWNS[el.value].water; render(true); }
+  else if (el.id === "draft-power") { state.draft.power = el.value; }
+  else if (el.id === "draft-water") { state.draft.water = el.value; }
+  else if (el.getAttribute("data-notif")) { state.contact[el.getAttribute("data-notif")] = el.checked; store.set("contact", state.contact); render(true); }
+  else if (el.getAttribute("data-contact")) { render(true); }
   else if (el.getAttribute("data-act") === "check") {
     var id = el.getAttribute("data-id");
     if (el.checked) state.checks[id] = 1; else delete state.checks[id];
@@ -624,8 +893,12 @@ document.addEventListener("change", function (ev) {
 document.addEventListener("input", function (ev) {
   var k = ev.target.getAttribute && ev.target.getAttribute("data-plan");
   if (k) { state.plan[k] = ev.target.value; store.set("plan", state.plan); }
+  var dk = ev.target.getAttribute && ev.target.getAttribute("data-draft");
+  if (dk && state.draft) { state.draft[dk] = ev.target.value; if (state.draftErr) { state.draftErr = null; var e = document.querySelector(".err"); if (e) e.remove(); } }
+  var ck = ev.target.getAttribute && ev.target.getAttribute("data-contact");
+  if (ck) { state.contact[ck] = ev.target.value; store.set("contact", state.contact); }
 });
-window.addEventListener("hashchange", function () { state.card = null; state.copyText = null; render(); });
+window.addEventListener("hashchange", function () { state.card = null; state.copyText = null; state.editing = null; state.draft = null; render(); });
 
 var langSel = document.getElementById("lang");
 langSel.innerHTML = Object.keys(LANGS).map(function (k) { return '<option value="' + k + '">' + LANGS[k] + "</option>"; }).join("");
