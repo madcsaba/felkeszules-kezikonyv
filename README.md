@@ -8,10 +8,10 @@ Statikus, függőség nélküli weboldal (HTML + CSS + JS) a „Felkészülés v
 - `style.css` – megjelenés: világos/sötét téma, mobilnézet, nyomtatási (PDF) nézet
 - `script.js` – tartalomjegyzék-kiemelés, mobilmenü, kipipálható listák (csak a böngészőben tárolva), 10 pontos teszt pontozása
 - `app/` – mobilalkalmazás (PWA): 5 képernyő, 4 nyelv (hu, en, uk, de), telepíthető a kezdőképernyőre
-- `docs/peticio-szolgaltatok.md` – közérthető petíció a közműszolgáltatókhoz
-- `docs/szakpolitikai-javaslat.md` – szakpolitikai javaslat a minisztériumoknak, szabványjavaslattal és nemzetközi példákkal
-- `docs/minta/` – mintafájlok (JSON, RSS, SMS-forma) a szabványhoz, kitalált adatokkal
-- `docs/kozmu-ertesites.md` – javasolt szabvány a közmű-kimaradási értesítésekhez (CAP-alapú, helyalapú, aláírt, SMS-be is belefér)
+- **Közmű-anyag (külön repóban):** a közmű-kimaradási értesítés szabványtervezete, a
+  közműszolgáltatókhoz szóló petíció, a szakpolitikai javaslat és a mintafájlok 2026 novemberében
+  átköltöztek a [`madcsaba/kozmu-ertesites`](https://madcsaba.github.io/kozmu-ertesites/) oldalra
+  (HTML-oldalak + eredeti markdown források).
 - `sw.js` – service worker: az app és a kézikönyv internet nélkül is megnyílik
 - `.nojekyll` – a GitHub Pages ne futtassa a Jekyllt
 
@@ -44,11 +44,14 @@ Ezek csak az adott állítást alátámasztó hivatalos forrás ellenőrzése ut
 
 ## Forrás
 
-Az eredeti fájlok a `madcsaba/kh` repó `claude/confident-cray-gd9rcq` ágának `docs/` mappájában készültek.
+Az eredeti fájlok a `madcsaba/kh` repó `claude/confident-cray-gd9rcq` ágának `docs/` mappájában
+készültek, majd a kézikönyv `docs/` mappájába kerültek. A közmű-anyag (szabvány, petíció,
+szakpolitikai javaslat, mintafájlok) 2026 novemberében innen **átköltözött** a
+`madcsaba/kozmu-ertesites` repóba: <https://madcsaba.github.io/kozmu-ertesites/>
 
 ## Mobilalkalmazás (`app/`)
 
-**Demó:** az alkalmazás mintaadatokkal fut, és azt mutatja be, mi lenne látható, ha a szolgáltatók a `docs/kozmu-ertesites.md` szerinti szabványos, aláírt formában publikálnák a kimaradásokat. Nem éles szolgáltatás.
+**Demó:** az alkalmazás mintaadatokkal fut, és azt mutatja be, mi lenne látható, ha a szolgáltatók a [közmű-kimaradási szabvány](https://madcsaba.github.io/kozmu-ertesites/szabvany.html) szerinti szabványos, aláírt formában publikálnák a kimaradásokat. Nem éles szolgáltatás.
 
 Elérhető: `https://madcsaba.github.io/felkeszules-kezikonyv/app/`
 

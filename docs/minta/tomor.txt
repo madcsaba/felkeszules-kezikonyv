@@ -1,7 +1,0 @@
-# Tömör forma (DEMÓ). Mezők: verzió|szolgáltatás|típus|állapot|ok|település|kezdet|várható vége|kiadó|aláírás
-# Időpontok: Unix-perc, 36-os számrendszerben. Éles rendszerben a település KSH-kód, az aláírás 64 bájtos Ed25519 (base64: 86 karakter).
-
-K1|E|Z|F|c4|budapest|ht5jc|ht5ou|eon_bp|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#   hossz aláírás nélkül: 39 karakter, aláírással: 126 karakter
-K1|V|Z|F|c3|budapest|ht5gs|ht5wc|fv|AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-#   hossz aláírás nélkül: 35 karakter, aláírással: 122 karakter
