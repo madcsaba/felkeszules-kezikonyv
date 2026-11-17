@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miért nincs áram? – javaslat a szabványos közmű-tájékoztatásra</title>
+<meta name="description" content="Szakpolitikai javaslat és petíció: a közműszolgáltatók egységes, géppel olvasható, hitelesített formában tegyék közzé a kimaradásokat. Működő demó alkalmazással.">
+<meta property="og:title" content="Miért nincs áram? Miért nincs víz? Tudjuk meg egy helyen.">
+<meta property="og:description" content="Szakpolitikai javaslat, működő demó és petíció a szabványos közmű-kimaradási tájékoztatásért.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="hu_HU">
+<meta name="theme-color" content="#0f1724">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: a dark "blackout" hero with one sodium-lamp light, then a quiet paper column of numbered sections; the demo sits in a phone frame. */
+:root{
+  --paper:#f6f4ef; --surface:#ffffff; --ink:#18202b; --muted:#56606c; --line:#dcd7cc;
+  --accent:#1f5f5b; --on-accent:#ffffff; --lamp:#f2a33a; --lamp-ink:#6b3f00;
+  --night:#0f1724; --night-2:#18233a; --night-ink:#e9edf3; --night-muted:#9aa6b8;
+  --bad:#9a3412; --bad-bg:#fbeee6; --good:#1e6b3f; --good-bg:#e5f3ea;
+  --display:"Newsreader", "Iowan Old Style", Georgia, serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#11161d; --surface:#18202a; --ink:#e8ebf0; --muted:#a3adba; --line:#2b3542;
+    --accent:#74cbc1; --on-accent:#06201d; --lamp-ink:#ffd9a0;
+    --bad:#ffb08a; --bad-bg:#3a1e12; --good:#8fdcae; --good-bg:#12301f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#11161d; --surface:#18202a; --ink:#e8ebf0; --muted:#a3adba; --line:#2b3542;
+  --accent:#74cbc1; --on-accent:#06201d; --lamp-ink:#ffd9a0;
+  --bad:#ffb08a; --bad-bg:#3a1e12; --good:#8fdcae; --good-bg:#12301f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 var(--body)}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--lamp);outline-offset:3px}
+h1,h2,h3{font-family:var(--display);font-weight:650;line-height:1.12;text-wrap:balance;margin:0}
+h2{font-size:clamp(30px,4.4vw,44px);letter-spacing:-.01em}
+h3{font-size:22px;font-weight:600}
+p{margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.read{max-width:68ch}
+
+/* ---------- top bar ---------- */
+.bar{position:sticky;top:0;z-index:10;background:var(--night);color:var(--night-ink);border-bottom:1px solid #26324a}
+.bar .wrap{display:flex;align-items:center;gap:18px;min-height:56px;flex-wrap:wrap}
+.bar strong{font-family:var(--mono);font-weight:500;font-size:14px;letter-spacing:.04em;color:var(--lamp)}
+.bar nav{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto}
+.bar nav a{color:var(--night-ink);text-decoration:none;font-size:15px;opacity:.85}
+.bar nav a:hover{opacity:1;text-decoration:underline}
+
+/* ---------- hero ---------- */
+.hero{background:radial-gradient(1200px 520px at 82% 18%, rgba(242,163,58,.16), transparent 60%), var(--night);color:var(--night-ink);padding:72px 0 64px;color-scheme:dark}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:center}
+.kicker{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--night-muted)}
+.hero h1{font-size:clamp(44px,7vw,84px);letter-spacing:-.02em;margin:14px 0 18px}
+.hero h1 em{font-style:normal;color:var(--lamp)}
+.hero .lead{font-size:20px;color:#cfd6e1;max-width:34ch}
+.hero .to{margin-top:18px;font-size:16px;color:var(--night-muted)}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:12px 22px;border-radius:12px;font:600 17px/1.2 var(--body);text-decoration:none;border:2px solid transparent;cursor:pointer}
+.btn.lamp{background:var(--lamp);color:#1d1203}
+.btn.ghost{border-color:#3a4a66;color:var(--night-ink);background:transparent}
+.btn.solid{background:var(--accent);color:var(--on-accent)}
+.btn.line{border-color:var(--accent);color:var(--accent);background:transparent}
+.btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+
+/* decoder: the hero's one moment */
+.decoder{background:var(--night-2);border:1px solid #2c3a57;border-radius:18px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.decoder .label{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--night-muted)}
+.code{font-family:var(--mono);font-size:15px;color:var(--lamp);background:#0b111c;border-radius:10px;padding:14px;margin:10px 0 18px;overflow-wrap:anywhere}
+.code .sig{color:#5b6b85}
+.notice{border-left:4px solid var(--lamp);padding:4px 0 4px 16px;min-height:150px}
+.notice .lang{font-family:var(--mono);font-size:12px;color:var(--night-muted);letter-spacing:.08em}
+.notice .t{font-family:var(--display);font-size:26px;line-height:1.2;margin:6px 0 8px;color:#fff}
+.notice .d{color:#cfd6e1;font-size:16px}
+.fade{transition:opacity .35s ease}
+.fade.out{opacity:0}
+@media (prefers-reduced-motion: reduce){.fade{transition:none}}
+.langs{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.langs button{font:500 14px var(--mono);background:transparent;color:var(--night-muted);border:1px solid #33425f;border-radius:999px;padding:6px 12px;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--lamp);color:#1d1203;border-color:var(--lamp)}
+.decoder .foot{margin-top:14px;font-size:14px;color:var(--night-muted)}
+
+/* ---------- sections ---------- */
+section.s{padding:84px 0;border-bottom:1px solid var(--line)}
+section[id]{scroll-margin-top:56px}
+.num{font-family:var(--mono);font-size:14px;color:var(--accent);letter-spacing:.08em;margin-bottom:10px}
+.intro{margin-top:16px;font-size:19px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:36px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:36px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.card p{color:var(--muted);font-size:16px}
+.chan{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+/* problem channels */
+.who{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:36px}
+.who .card{gap:6px}
+.who b{font-size:17px}
+.who .how{font-family:var(--display);font-size:21px;line-height:1.2}
+.verdict{margin-top:20px;display:flex;gap:14px;align-items:flex-start;background:var(--bad-bg);color:var(--bad);border-radius:14px;padding:16px 18px;font-weight:500}
+.verdict span{font-family:var(--mono);font-size:13px;letter-spacing:.06em;border:1px solid currentColor;border-radius:6px;padding:2px 6px;white-space:nowrap}
+
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:40px;counter-reset:f}
+.flow li{list-style:none;position:relative;padding:22px 22px 22px 22px;background:var(--surface);border:1px solid var(--line);margin-right:-1px}
+.flow li:first-child{border-radius:16px 0 0 16px}
+.flow li:last-child{border-radius:0 16px 16px 0}
+.flow li::before{counter-increment:f;content:counter(f);display:inline-flex;width:32px;height:32px;border-radius:50%;align-items:center;justify-content:center;background:var(--accent);color:var(--on-accent);font:600 15px var(--mono);margin-bottom:12px}
+.flow h3{font-size:20px;margin-bottom:6px}
+.flow p{font-size:15px;color:var(--muted)}
+.flow ol{padding:0;margin:0}
+
+/* table */
+.tablewrap{overflow-x:auto;margin-top:32px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:16px}
+th,td{text-align:left;vertical-align:top;padding:14px 16px;border-bottom:1px solid var(--line)}
+th{font:600 13px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:transparent}
+tr:last-child td{border-bottom:0}
+td.now{color:var(--muted)}
+td.then{color:var(--ink);font-weight:500}
+td.then::before{content:"→ ";color:var(--good)}
+
+/* demo */
+.demo{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:48px;align-items:start;margin-top:36px}
+.phone{justify-self:center;width:100%;max-width:400px;border-radius:44px;padding:12px;background:#0b111c;box-shadow:0 30px 70px rgba(15,23,36,.28)}
+.phone iframe{display:block;width:100%;height:760px;border:0;border-radius:34px;background:#f3f6f5}
+.steps{padding-left:22px;margin:18px 0 0;display:flex;flex-direction:column;gap:10px}
+.demo-tag{display:inline-block;font:600 13px var(--mono);letter-spacing:.08em;background:#fff2d1;color:#7a5200;border-radius:6px;padding:3px 8px}
+
+/* proposal */
+.points{counter-reset:p;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:32px 0 0;padding:0}
+.points li{list-style:none;counter-increment:p;display:grid;grid-template-columns:44px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.points li::before{content:counter(p,decimal-leading-zero);font:500 22px var(--mono);color:var(--accent)}
+.points b{display:block;margin-bottom:4px}
+.points span{color:var(--muted);font-size:16px}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:14px;height:2px;background:var(--line)}
+.tl{position:relative;padding-top:38px}
+.tl::before{content:"";position:absolute;top:6px;left:0;width:18px;height:18px;border-radius:50%;background:var(--paper);border:3px solid var(--accent)}
+.tl .when{font:500 14px var(--mono);color:var(--accent)}
+.tl p{color:var(--muted);font-size:16px;margin-top:6px}
+
+/* intl */
+.intl .card .flag{font:500 13px var(--mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.intl .card .take{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);font-size:15px;color:var(--ink)}
+
+/* petition */
+.petition{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px;margin-top:36px;align-items:start}
+.letter{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px;font-size:17px;display:flex;flex-direction:column;gap:14px}
+.letter h3{font-size:28px}
+.letter ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px}
+.sign{position:sticky;top:76px;background:var(--night);color:var(--night-ink);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:14px;color-scheme:dark}
+.sign h3{color:#fff}
+.sign p{color:#cfd6e1;font-size:16px}
+.sign .note{font-size:14px;color:var(--night-muted)}
+.copyrow{display:flex;gap:8px}
+.copyrow input{flex:1;min-width:0;font:14px var(--mono);background:#0b111c;color:#cfd6e1;border:1px solid #33425f;border-radius:10px;padding:10px}
+.copyrow button{font:600 15px var(--body);background:transparent;color:var(--night-ink);border:1px solid #3a4a66;border-radius:10px;padding:0 14px;cursor:pointer}
+
+footer{padding:56px 0 72px;color:var(--muted);font-size:15px}
+footer .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+footer h4{font:600 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin:0 0 10px}
+footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.disclaimer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+
+@media (max-width:900px){
+  .hero .wrap,.demo,.petition{grid-template-columns:1fr}
+  .who{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .flow{grid-template-columns:1fr 1fr}
+  .flow li{border-radius:0!important;margin:0 -1px -1px 0}
+  .grid3,footer .cols{grid-template-columns:1fr 1fr}
+  .sign{position:static}
+}
+@media (max-width:600px){
+  body{font-size:17px}
+  section.s{padding:60px 0}
+  .hero{padding:48px 0}
+  .who,.flow,.grid2,.grid3,.points,.timeline,footer .cols{grid-template-columns:1fr}
+  .timeline::before{display:none}
+  .bar nav{display:none}
+  .phone iframe{height:680px}
+  .letter{padding:22px}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <strong>KÖZMŰ-KIMARADÁS K1</strong>
+    <nav aria-label="Oldal részei">
+      <a href="#problema">Probléma</a>
+      <a href="#megoldas">Megoldás</a>
+      <a href="#demo">Demó</a>
+      <a href="#javaslat">Javaslat</a>
+      <a href="#peticio">Petíció</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div>
+      <p class="kicker">Szakpolitikai javaslat · demó · petíció</p>
+      <h1 id="h1">Miért nincs áram? <em>Miért nincs víz?</em></h1>
+      <p class="lead">Tudjuk meg egy helyen, a saját nyelvünkön, minden ingatlanunkra. Ehhez csak az kell, hogy a szolgáltatók egyféle, hitelesített formában közöljék a kimaradásokat.</p>
+      <p class="to">Javaslat Tanács Zoltán tudományos és technológiai miniszter részére</p>
+      <div class="cta">
+        <a class="btn lamp" href="#peticio">Aláírom a petíciót</a>
+        <a class="btn ghost" href="#demo">Kipróbálom a demót</a>
+      </div>
+    </div>
+
+    <div class="decoder" aria-labelledby="dec-title">
+      <p class="label" id="dec-title">Ennyi utazik a hálózaton – egy SMS-nyi</p>
+      <p class="code">K1|E|Z|F|c4|budapest|ht5jc|ht5ou|eon_bp<span class="sig">|kX9…aláírás</span></p>
+      <p class="label">… és ezt látja belőle a telefon</p>
+      <div class="notice fade" id="notice" aria-live="polite">
+        <p class="lang" id="n-lang">MAGYAR</p>
+        <p class="t" id="n-title">Áramszünet: üzemzavar, vihar miatt</p>
+        <p class="d" id="n-desc">Budapest · várható helyreállítás 13:30 · kiadó: E.ON – Elmű Hálózati · hitelesített</p>
+      </div>
+      <div class="langs" role="group" aria-label="Nyelv választása">
+        <button type="button" data-l="hu" aria-pressed="true">HU</button>
+        <button type="button" data-l="en" aria-pressed="false">EN</button>
+        <button type="button" data-l="uk" aria-pressed="false">UK</button>
+        <button type="button" data-l="de" aria-pressed="false">DE</button>
+      </div>
+      <p class="foot">Kódok utaznak, nem szöveg: ezért fér el egy SMS-ben, és ezért olvasható bármely nyelven. Kitalált adatokkal.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="problema" aria-labelledby="h-prob">
+  <div class="wrap">
+    <p class="num">01 · A PROBLÉMA</p>
+    <h2 id="h-prob" class="read">Négy áramelosztó, négyféle értesítés, és egyik sem géppel olvasható</h2>
+    <p class="intro read">Ha elmegy az áram, először azt kell kideríteni, melyik cég az illetékes, aztán megtalálni a honlapját és ott a saját címünket. Minden szolgáltató máshogy kommunikál, és a vízművekkel még tovább nő a lista.</p>
+
+    <div class="who">
+      <div class="card"><b>E.ON</b><span class="how">Online térkép és digitális csatornák</span><span class="chan">eon.hu</span></div>
+      <div class="card"><b>MVM Démász</b><span class="how">Szórólap a postaládában, hirdetmény a lépcsőházban</span><span class="chan">2026 augusztusától</span></div>
+      <div class="card"><b>MVM Émász</b><span class="how">E-mail, de e-mailben kell igényelni, mérésipont-azonosítóval</span><span class="chan">mvmemaszhalozat.hu</span></div>
+      <div class="card"><b>Opus Titász</b><span class="how">Saját mobilapp, push értesítéssel</span><span class="chan">opustitasz.hu</span></div>
+    </div>
+    <p class="verdict"><span>EREDMÉNY</span>Nincs nyilvános, géppel olvasható csatorna. A független aggregátorok a weboldalakat kérdezik le, és maguk is csak tájékoztató jellegűnek minősítik az adataikat.</p>
+
+    <div class="grid3">
+      <div class="card"><h3>Több ingatlan, idős szülő</h3><p>Szolgáltatónként és címenként külön regisztráció kell, ha egyáltalán lehetséges.</p></div>
+      <div class="card"><h3>Nem magyar anyanyelvűek</h3><p>Az értesítés csak magyarul érhető el; turistának, ideköltözőnek szinte használhatatlan.</p></div>
+      <div class="card"><h3>Vihar, hőhullám</h3><p>A hibabejelentő túlterhelt, a lakos gyenge mobilneten keresgél, az önkormányzat kézzel másolja a közleményeket.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="megoldas" aria-labelledby="h-sol">
+  <div class="wrap">
+    <p class="num">02 · A MEGOLDÁS</p>
+    <h2 id="h-sol" class="read">Egy szabvány: a szolgáltató a területet teszi közzé, a telefon dönti el, érintett vagy-e</h2>
+    <p class="intro read">Nem kell új rendszer: a szolgáltatók ma is nyilvántartják a kimaradásokat, ebből táplálják a térképeiket. Csak egy közös kimeneti formára van szükség, nemzetközi szabványra (CAP) építve.</p>
+    <ol class="flow">
+      <li><h3>A szolgáltató rögzít</h3><p>Ahogy ma is: hol, miért, mettől meddig. A rendszere kódolt, aláírt üzenetet készít belőle.</p></li>
+      <li><h3>Nyilvános közzététel</h3><p>Településenként egy fájl és RSS a honlapon; súlyos esetben SMS-nyi tömör forma.</p></li>
+      <li><h3>A telefon ellenőriz</h3><p>Hiteles-e az aláírás, és a kiadó jogosult-e erre a területre és szolgáltatásra.</p></li>
+      <li><h3>Helyben szűr, saját nyelven</h3><p>A mentett helyekre szűr; a cím nem hagyja el a telefont. A szöveget a lakos nyelvén rakja össze.</p></li>
+    </ol>
+
+    <div class="tablewrap" role="region" aria-label="Mit nyernek az állampolgárok" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Helyzet</th><th scope="col">Ma</th><th scope="col">A szabvánnyal</th></tr></thead>
+        <tbody>
+          <tr><td>Nincs áram otthon</td><td class="now">Ki kell deríteni az illetékest, megkeresni a honlapját</td><td class="then">A telefon azonnal mutatja: tervezett vagy hiba, mi az oka, mikorra várható a helyreállítás</td></tr>
+          <tr><td>Nyaraló, szülők lakása, utazás</td><td class="now">Szolgáltatónként külön regisztráció</td><td class="then">Egy alkalmazásban minden hely, minden szolgáltató</td></tr>
+          <tr><td>Nem magyar anyanyelvű lakos</td><td class="now">Csak magyar szöveg</td><td class="then">A kódolt üzenet bármely nyelven megjelenik</td></tr>
+          <tr><td>Tömeges kimaradás</td><td class="now">Túlterhelt hibabejelentő</td><td class="then">SMS-be is beleférő értesítés, kevesebb fölösleges hívás</td></tr>
+          <tr><td>Önkormányzat, kórház, idősotthon</td><td class="now">Kézzel másolt közlemények</td><td class="then">Automatikus átvétel RSS-ből vagy JSON-ból</td></tr>
+          <tr><td>Hamis „vízhiány”-üzenet</td><td class="now">Nehéz megkülönböztetni a valóditól</td><td class="then">Aláírás nélkül nem jelenik meg hivatalosként</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="demo" aria-labelledby="h-demo">
+  <div class="wrap">
+    <p class="num">03 · MŰKÖDŐ DEMÓ</p>
+    <h2 id="h-demo" class="read">Próbáld ki, milyen lenne, ha már így publikálnának</h2>
+    <div class="demo">
+      <div class="read">
+        <p><span class="demo-tag">DEMÓ</span> Az alkalmazás mintaadatokkal fut; minden kimaradás kitalált. Azt mutatja meg, mit látna a lakos a szabvány bevezetése után.</p>
+        <ol class="steps">
+          <li>A <b>Helyben</b> fülön adj hozzá egy második helyet, például egy nyaralót Siófokon.</li>
+          <li>A <b>Frissítések</b> fülön nyomd meg: <i>„Mi lenne, ha így publikálnák? – mintanap betöltése”</i>.</li>
+          <li>A <b>Most</b> fülön megjelennek a kimaradások; a <b>Nincs áram</b> kártyán a helyek között válthatsz.</li>
+          <li>Válts nyelvet a jobb felső sarokban: magyar, angol, ukrán, német.</li>
+          <li>A Frissítések fülön a hamis feladó üzenetét az app elutasítja.</li>
+        </ol>
+        <p style="margin-top:20px">Internet nélkül is működik, és telepíthető a telefon kezdőképernyőjére. Az alkalmazás egy nyílt, magyar vészhelyzeti felkészülési kézikönyv része.</p>
+        <div class="cta">
+          <a class="btn solid" href="app/index.html?lang=hu" target="_blank" rel="noopener">Megnyitás teljes képernyőn</a>
+          <a class="btn line" href="https://madcsaba.github.io/felkeszules-kezikonyv/" target="_blank" rel="noopener">A kézikönyv</a>
+        </div>
+      </div>
+      <div class="phone"><iframe src="app/index.html?lang=hu#most" title="Demó alkalmazás: Felkészülés" loading="lazy"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="javaslat" aria-labelledby="h-prop">
+  <div class="wrap">
+    <p class="num">04 · A JAVASLAT</p>
+    <h2 id="h-prop" class="read">Mit kérünk a kormánytól</h2>
+    <p class="intro read"><b>Címzett:</b> Tanács Zoltán tudományos és technológiai miniszter; másolatban az energiapolitikáért és a víziközmű-szolgáltatásért felelős miniszter, a Magyar Energetikai és Közmű-szabályozási Hivatal (MEKH) és az Országos Katasztrófavédelmi Főigazgatóság.</p>
+    <p class="intro read">A kormánytagok feladatköreiről szóló 2026-os rendelet szerint az ágazati infokommunikációs fejlesztési javaslatokat az energiapolitikáért, illetve a víziközmű-szolgáltatásért felelős miniszter az informatikáért felelős miniszterrel egyetértésben dolgozza ki. A közmű-tájékoztatás egységes digitális szabványa pontosan ilyen feladat.</p>
+
+    <ul class="points">
+      <li><div><b>Kormányrendelet a közzétételről</b><span>Minden elosztó és víziközmű-szolgáltató tegye közzé a tervezett munkát, az üzemzavart, a korlátozást és a helyreállítást, egységes formában.</span></div></li>
+      <li><div><b>MEKH-szabvány</b><span>Adatmezők, kódlisták, JSON, RSS/Atom és tömör SMS-forma, a nemzetközi CAP magyar profiljaként.</span></div></li>
+      <li><div><b>Állami tanúsítványlánc</b><span>Minden szolgáltató saját kulcsot kap, amely csak a saját szolgáltatására és területére érvényes.</span></div></li>
+      <li><div><b>Országos továbbító</b><span>SMS és e-mail egy helyen kérhető és vonható vissza; cím és ügyfélazonosító nélkül.</span></div></li>
+      <li><div><b>Adatvédelem a jogszabályban</b><span>A közzétett adat terület, nem személy; az érintettséget a lakos eszköze dönti el.</span></div></li>
+      <li><div><b>Nyílt adat</b><span>Bárki felhasználhatja (fejlesztők, önkormányzatok, sajtó); az aláírás garantálja a forrást.</span></div></li>
+    </ul>
+
+    <h3 style="margin-top:56px">Ütemezés</h3>
+    <div class="timeline">
+      <div class="tl"><p class="when">0–6. hónap</p><p>Szabványtervezet egyeztetése; kísérleti üzem egy áramelosztóval és egy vízművel.</p></div>
+      <div class="tl"><p class="when">6–12. hónap</p><p>Kötelező a négy áramelosztónál; a vízműveknél önkéntes, közös feltöltőfelülettel.</p></div>
+      <div class="tl"><p class="when">12–24. hónap</p><p>Kötelező a víz-, gáz- és távhőszolgáltatóknak is; az országos továbbító indul.</p></div>
+    </div>
+    <p class="intro read" style="margin-top:32px"><b>Költség:</b> a szolgáltatóknál a meglévő üzemzavar-kezelő rendszer egy exportfelülettel bővül; a közzététel statikus fájl, új infrastruktúra nem kell. A pontos nagyságrendet a kísérleti üzem adja meg.</p>
+    <div class="cta">
+      <a class="btn solid" href="docs/szakpolitikai-javaslat.md">A teljes javaslat</a>
+      <a class="btn line" href="docs/kozmu-ertesites.md">Műszaki leírás</a>
+      <a class="btn line" href="docs/minta/">Mintafájlok</a>
+    </div>
+  </div>
+</section>
+
+<section class="s intl" id="peldak" aria-labelledby="h-intl">
+  <div class="wrap">
+    <p class="num">05 · NEMZETKÖZI PÉLDÁK</p>
+    <h2 id="h-intl" class="read">Ahol van közös szabvány, ott a szolgáltatók maguk adják az adatot</h2>
+    <div class="grid3">
+      <div class="card"><span class="flag">Egyesült Királyság</span><h3>Közös kimaradási API</h3><p>Az elosztók szövetsége közös API-specifikációt adott ki; a UK Power Networks közel valós idejű, tervezett és nem tervezett kimaradásokat ad közre nyílt adatként.</p><p class="take">Átvesszük: egy ágazati specifikáció mindenkinek.</p></div>
+      <div class="card"><span class="flag">Egyesült Királyság</span><h3>105 – egy szám mindenhez</h3><p>2016 óta egyetlen ingyenes szám minden áramelosztóhoz, az elosztók finanszírozásával. Előtte az emberek 72%-a nem tudta, kit hívjon áramszünetnél.</p><p class="take">Átvesszük: egy belépési pont a lakosnak.</p></div>
+      <div class="card"><span class="flag">Nemzetközi</span><h3>CAP riasztási szabvány</h3><p>Az ITU-T X.1303 ajánlásként elfogadott szabvány; az USA, Kanada és Ausztrália saját profilt készített belőle.</p><p class="take">Átvesszük: az adatmodellt, magyar profillal.</p></div>
+      <div class="card"><span class="flag">Európa</span><h3>MeteoAlarm</h3><p>36 európai meteorológiai szolgálat közös figyelmeztető rendszere, CAP-alapú hírcsatornákkal.</p><p class="take">Átvesszük: CAP és RSS/Atom együtt.</p></div>
+      <div class="card"><span class="flag">Európai Unió</span><h3>EU-Alert</h3><p>Minden tagállamnak 2022 júniusáig lakossági riasztórendszert kellett működtetnie mobiltelefonokra.</p><p class="take">Átvesszük: súlyos esetben ide köthető be.</p></div>
+      <div class="card"><span class="flag">USA</span><h3>Fizetős aggregátorok</h3><p>Szabvány híján magáncégek gyűjtik össze több száz szolgáltató adatát, és fizetős API-ként adják tovább.</p><p class="take">Tanulság: szabvány nélkül a piac tölti ki a hiányt.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="peticio" aria-labelledby="h-pet">
+  <div class="wrap">
+    <p class="num">06 · PETÍCIÓ</p>
+    <h2 id="h-pet" class="read">Kérjük a szolgáltatókat: tudjuk meg egy helyen, miért nincs áram vagy víz</h2>
+    <div class="petition">
+      <article class="letter">
+        <h3>Tisztelt Szolgáltatók!</h3>
+        <p><b>Címzettek:</b> E.ON Hungária Csoport, MVM Démász Áramhálózati Kft., MVM Émász Áramhálózati Kft., OPUS TITÁSZ Zrt., valamint a magyarországi víziközmű-, földgáz- és távhőszolgáltatók.</p>
+        <p>Ha otthon elmegy az áram vagy nem jön víz a csapból, az első kérdés mindig ugyanaz: nálunk van baj, vagy az egész utcában? Tervezett munka vagy hiba? Mikorra jön vissza?</p>
+        <p>Ma ezt csak úgy tudhatjuk meg, ha tudjuk, melyik cég az illetékes, megtaláljuk a honlapját, és ott kikeressük a címünket. Akinek több ingatlana van, idős szüleit segíti vagy éppen utazik, annak ez még nehezebb. Aki nem beszél jól magyarul, annak szinte lehetetlen.</p>
+        <p>Tudjuk, hogy Önök sokat tesznek a tájékoztatásért. Most egy kis lépést kérünk, amely mindezt összeköti. <b>Azt kérjük, hogy:</b></p>
+        <ol>
+          <li>tegyék közzé a kimaradásokat <b>géppel olvasható formában is</b>, a mostani térképek mellé;</li>
+          <li>használják mindannyian <b>ugyanazt a formát</b>, hogy egy alkalmazás egyszerre mutassa az áramot, a vizet és a gázt;</li>
+          <li>jelöljék az okot és a várható helyreállítást <b>kóddal</b>, hogy bármely nyelvre lefordítható legyen;</li>
+          <li><b>hitelesítsék digitális aláírással</b>, hogy senki ne terjeszthessen hamis üzenetet az Önök nevében;</li>
+          <li>jelezzék a <b>helyreállítást is</b>, ne csak a kezdetet;</li>
+          <li>egyezzenek meg a többi szolgáltatóval és a minisztériumokkal egy <b>közös szabványban</b>.</li>
+        </ol>
+        <p><b>Személyes adatot nem kérünk:</b> a szolgáltató a kimaradás területét teszi közzé, nem az érintettek címét.</p>
+        <p>Köszönjük, hogy megfontolják!<br><i>Az aláírók</i></p>
+      </article>
+
+      <aside class="sign" aria-labelledby="h-sign">
+        <h3 id="h-sign">Írd alá, és oszd meg</h3>
+        <p>Az aláírásokat egy petíciós felület gyűjti; az oldal nem tárol személyes adatot.</p>
+        <a class="btn lamp" id="sign-btn" href="#" aria-disabled="true">Az aláírás hamarosan indul</a>
+        <p class="note" id="sign-note">Az aláírási link még nincs beállítva.</p>
+        <label class="note" for="share-url">Az oldal linkje:</label>
+        <div class="copyrow"><input id="share-url" readonly value=""><button type="button" id="copy-btn">Másolás</button></div>
+        <p class="note" id="copy-status" role="status"></p>
+      </aside>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Dokumentumok</h4>
+        <ul>
+          <li><a href="docs/szakpolitikai-javaslat.md">Szakpolitikai javaslat</a></li>
+          <li><a href="docs/peticio-szolgaltatok.md">Petíció szövege</a></li>
+          <li><a href="docs/kozmu-ertesites.md">Szabványjavaslat (műszaki)</a></li>
+          <li><a href="docs/minta/">Mintafájlok: JSON, RSS, SMS</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Hazai források</h4>
+        <ul>
+          <li><a href="https://mvmhalozat.hu/aram/oldalak/5925">MVM Hálózat: tervezett áramszünetek</a></li>
+          <li><a href="https://mvmemaszhalozat.hu/ugyfeleinknek/hasznos-informaciok/tervezett-aramszunetek">MVM Émász: értesítés</a></li>
+          <li><a href="https://www.szegedamindenem.hu/belfold/valtozik-a-tervezett-aramszunetekrol-szolo-ertesites-modja-az-mvm-demasz-teruleten/">Démász: szórólapos értesítés</a></li>
+          <li><a href="https://apps.apple.com/hu/app/opus-energetika-%C3%A1ramapp/id6477295912">Opus Titász Áramapp</a></li>
+          <li><a href="https://tervezettaramszunet.hu/">Független aggregátor</a></li>
+          <li><a href="https://magyarkozlony.bsdnet.hu/kozlony/7">Magyar Közlöny 2026/46</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Nemzetközi források</h4>
+        <ul>
+          <li><a href="https://ukpowernetworks.opendatasoft.com/explore/assets/ukpn-national-energy-outage/">UK Power Networks: Outage API</a></li>
+          <li><a href="https://www.westernpower.co.uk/news-and-events/latest-news/105-is-now-live">105 power cut number</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Common_Alerting_Protocol">Common Alerting Protocol</a></li>
+          <li><a href="https://wmo.int/media/magazine-article/leveraging-common-alerting-protocol-and-cell-broadcast-technology-advancing-early-warnings-all">WMO: CAP és MeteoAlarm</a></li>
+          <li><a href="https://interoperable-europe.ec.europa.eu/node/704086">EECC 110. cikk</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="disclaimer">Civil kezdeményezés, nem hivatalos kormányzati vagy szolgáltatói oldal. A demóban minden kimaradás kitalált. Tervezet, 2026. november.</p>
+  </div>
+</footer>
+
+<script>
+/* ==== Petíció beállítása ==========================================
+   Ide illeszd be az aláírási felület linkjét (pl. szabad.ahang.hu),
+   és a gomb automatikusan aktív lesz. */
+var PETITION_URL = "";
+/* ================================================================= */
+
+(function () {
+  "use strict";
+  var btn = document.getElementById("sign-btn");
+  var note = document.getElementById("sign-note");
+  if (PETITION_URL) {
+    btn.href = PETITION_URL;
+    btn.target = "_blank"; btn.rel = "noopener";
+    btn.textContent = "Aláírom a petíciót";
+    btn.removeAttribute("aria-disabled");
+    note.textContent = "A link a petíciós felületre visz.";
+  } else {
+    btn.addEventListener("click", function (e) { e.preventDefault(); });
+  }
+
+  var share = document.getElementById("share-url");
+  share.value = location.href.split("#")[0];
+  document.getElementById("copy-btn").addEventListener("click", function () {
+    var st = document.getElementById("copy-status");
+    try {
+      navigator.clipboard.writeText(share.value).then(function () { st.textContent = "Kimásolva."; },
+        function () { share.select(); st.textContent = "Jelöld ki és másold ki a linket."; });
+    } catch (e) { share.select(); st.textContent = "Jelöld ki és másold ki a linket."; }
+  });
+
+  /* Hero decoder: the same coded message, rendered in four languages */
+  var T = {
+    hu: ["MAGYAR", "Áramszünet: üzemzavar, vihar miatt", "Budapest · várható helyreállítás 13:30 · kiadó: E.ON – Elmű Hálózati · hitelesített"],
+    en: ["ENGLISH", "Power cut: fault caused by a storm", "Budapest · expected restoration 13:30 · issued by E.ON – Elmű Hálózati · verified"],
+    uk: ["УКРАЇНСЬКА", "Відключення світла: аварія через негоду", "Будапешт · очікуване відновлення 13:30 · видавець: E.ON – Elmű Hálózati · перевірено"],
+    de: ["DEUTSCH", "Stromausfall: Störung durch Unwetter", "Budapest · voraussichtliche Behebung 13:30 · Herausgeber: E.ON – Elmű Hálózati · verifiziert"]
+  };
+  var order = ["hu", "en", "uk", "de"], idx = 0, timer = null;
+  var box = document.getElementById("notice");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var buttons = document.querySelectorAll(".langs button");
+  function show(l) {
+    buttons.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-l") === l ? "true" : "false"); });
+    var apply = function () {
+      document.getElementById("n-lang").textContent = T[l][0];
+      document.getElementById("n-title").textContent = T[l][1];
+      document.getElementById("n-desc").textContent = T[l][2];
+      box.lang = l; box.classList.remove("out");
+    };
+    if (reduce) { apply(); return; }
+    box.classList.add("out"); setTimeout(apply, 300);
+  }
+  function auto() { timer = setInterval(function () { idx = (idx + 1) % order.length; show(order[idx]); }, 3200); }
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () { clearInterval(timer); idx = order.indexOf(b.getAttribute("data-l")); show(order[idx]); });
+  });
+  if (!reduce) auto();
+})();
+</script>
+</body>
+</html>
