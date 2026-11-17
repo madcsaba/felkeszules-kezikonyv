@@ -545,6 +545,7 @@ var state = {
   card: null,
   copyText: null
 };
+try { var qLang = new URLSearchParams(location.search).get("lang"); if (qLang && LANGS[qLang] && !store.get("lang", null)) state.lang = qLang; } catch (e) {}
 if (!LANGS[state.lang]) state.lang = "hu";
 if (!state.places || !state.places.length) state.places = [{ id: "p1", name: null, town: "budapest", power: "eon_bp", water: "fv" }];
 if (!state.places.some(function (p) { return p.id === state.here; })) state.here = state.places[0].id;
